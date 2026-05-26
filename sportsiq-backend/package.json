@@ -1,0 +1,47 @@
+{
+  "scripts": {
+    "dev": "nodemon --exec ts-node src/server.ts",
+    "dev:socket": "PORT=8082 nodemon --exec ts-node src/socketServer.ts",
+    "dev:poller:nba": "nodemon --exec ts-node src/pollerNBA.ts",
+    "dev:poller:nfl": "nodemon --exec ts-node src/pollerNFL.ts",
+    "dev:poller:nhl": "nodemon --exec ts-node src/pollerNHL.ts",
+    "dev:poller:cbb": "nodemon --exec ts-node src/pollerCBB.ts",
+    "dev:poller:mlb": "nodemon --exec ts-node src/pollerMLB.ts",
+    "dev:worker": "nodemon --exec ts-node src/contestWorker.ts",
+    "dev:worker:predictor": "PORT=8083 nodemon --exec ts-node src/predictorWorker.ts",
+    "dev:worker:trivia": "PORT=8084 nodemon --exec ts-node src/triviaWorker.ts",
+    "start": "node dist/server.js",
+    "start:socket": "node dist/socketServer.js",
+    "start:poller:nba": "node dist/pollerNBA.js",
+    "start:poller:nfl": "node dist/pollerNFL.js",
+    "start:poller:nhl": "node dist/pollerNHL.js",
+    "start:poller:cbb": "node dist/pollerCBB.js",
+    "start:poller:mlb": "node dist/pollerMLB.js",
+    "start:worker": "node dist/contestWorker.js",
+    "start:worker:predictor": "node dist/predictorWorker.js",
+    "start:worker:trivia": "node dist/triviaWorker.js",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.82.0",
+    "@supabase/supabase-js": "^2.75.0",
+    "async-mutex": "^0.5.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "luxon": "^3.7.2",
+    "multer": "^2.0.2",
+    "socket.io": "^4.8.3",
+    "twilio": "^5.10.5",
+    "uuid": "^13.0.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/multer": "^2.0.0",
+    "@types/node": "^24.7.0",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  }
+}
