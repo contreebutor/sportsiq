@@ -1,0 +1,379 @@
+# cloudbuild.yaml
+
+substitutions:
+  _REGION: "us-east1"
+  _IMAGE_NAME: "backend-service"
+  _NODE_ENV: "production"
+  _LOGS_BUCKET: "gs://sportsiq-backend-bucket/logs"
+  _API_SERVICE_BASE: "sportsiq-backend"
+  _POLLER_NBA_SERVICE_BASE: "sportsiq-backend-poller-nba"
+  _POLLER_NFL_SERVICE_BASE: "sportsiq-backend-poller-nfl"
+  _POLLER_NHL_SERVICE_BASE: "sportsiq-backend-poller-nhl"
+  _POLLER_CBB_SERVICE_BASE: "sportsiq-backend-poller-cbb"
+  _POLLER_MLB_SERVICE_BASE: "sportsiq-backend-poller-mlb"
+  _WORKER_SERVICE_BASE: "sportsiq-backend-worker"
+  _PREDICTOR_WORKER_SERVICE_BASE: "sportsiq-backend-predictor-worker"
+  _TRIVIA_SERVICE_BASE: "sportsiq-backend-trivia"
+  _TRIVIA_WORKER_SERVICE_BASE: "sportsiq-backend-trivia-worker"
+
+steps:
+  # Step 1: Build Docker image
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      [
+        "build",
+        "--no-cache",
+        "-t",
+        "gcr.io/$PROJECT_ID/${_IMAGE_NAME}:$SHORT_SHA",
+        ".",
+      ]
+
+  # Step 2: Push image to Google Container Registry (GCR)
+  - name: "gcr.io/cloud-builders/docker"
+    args: ["push", "gcr.io/$PROJECT_ID/${_IMAGE_NAME}:$SHORT_SHA"]
+
+  # Step 3a: Deploy API service to Cloud Run
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    entrypoint: "gcloud"
+    args:
+      - "run"
+      - "deploy"
+      - "${_API_SERVICE_BASE}-$BRANCH_NAME"
+      - "--image"
+      - "gcr.io/$PROJECT_ID/${_IMAGE_NAME}:$SHORT_SHA"
+      - "--region"
+      - "${_REGION}"
+      - "--platform"
+      - "managed"
+      - "--allow-unauthenticated"
+      - "--set-env-vars"
+      - >
+        NODE_ENV=${_NODE_ENV},
+        SPORTSDATA_API_URL=${_SPORTSDATA_API_URL},
+        SPORTSDATA_API_VERSION=${_SPORTSDATA_API_VERSION},
+        SPORTSDATA_API_KEY=${_SPORTSDATA_API_KEY},
+        SUPABASE_URL=${_SUPABASE_URL},
+        SUPABASE_API_SECRET_KEY=${_SUPABASE_API_SECRET_KEY},
+        TWILIO_ACCOUNT_SID=${_TWILIO_ACCOUNT_SID},
+        TWILIO_AUTH_TOKEN=${_TWILIO_AUTH_TOKEN},
+        TWILIO_SERVICE_SID=${_TWILIO_SERVICE_SID},
+        TWILIO_FROM_NUMBER=${_TWILIO_FROM_NUMBER},
+        FRONTEND_URL=${_FRONTEND_URL},
+        DEFAULT_PROFILE_PASSWORD=${_DEFAULT_PROFILE_PASSWORD}
+
+  # Step 3b: Deploy NBA poller service (long-running background loop)
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    entrypoint: "gcloud"
+    args:
+      - "run"
+      - "deploy"
+      - "${_POLLER_NBA_SERVICE_BASE}-$BRANCH_NAME"
+      - "--image"
+      - "gcr.io/$PROJECT_ID/${_IMAGE_NAME}:$SHORT_SHA"
+      - "--region"
+      - "${_REGION}"
+      - "--platform"
+      - "managed"
+      - "--no-allow-unauthenticated"
+      - "--concurrency"
+      - "1"
+      - "--max-instances"
+      - "1"
+      - "--min-instances"
+      - "1"
+      - "--no-cpu-throttling"
+      - "--args"
+      - "dist/pollerNBA.js"
+      - "--set-env-vars"
+      - >
+        NODE_ENV=${_NODE_ENV},
+        SPORTSDATA_API_URL=${_SPORTSDATA_API_URL},
+        SPORTSDATA_API_VERSION=${_SPORTSDATA_API_VERSION},
+        SPORTSDATA_API_KEY=${_SPORTSDATA_API_KEY},
+        SUPABASE_URL=${_SUPABASE_URL},
+        SUPABASE_API_SECRET_KEY=${_SUPABASE_API_SECRET_KEY},
+        TWILIO_ACCOUNT_SID=${_TWILIO_ACCOUNT_SID},
+        TWILIO_AUTH_TOKEN=${_TWILIO_AUTH_TOKEN},
+        TWILIO_SERVICE_SID=${_TWILIO_SERVICE_SID},
+        TWILIO_FROM_NUMBER=${_TWILIO_FROM_NUMBER},
+        FRONTEND_URL=${_FRONTEND_URL}
+
+  # Step 3c: Deploy NFL poller service (long-running background loop)
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    entrypoint: "gcloud"
+    args:
+      - "run"
+      - "deploy"
+      - "${_POLLER_NFL_SERVICE_BASE}-$BRANCH_NAME"
+      - "--image"
+      - "gcr.io/$PROJECT_ID/${_IMAGE_NAME}:$SHORT_SHA"
+      - "--region"
+      - "${_REGION}"
+      - "--platform"
+      - "managed"
+      - "--no-allow-unauthenticated"
+      - "--concurrency"
+      - "1"
+      - "--max-instances"
+      - "1"
+      - "--min-instances"
+      - "1"
+      - "--no-cpu-throttling"
+      - "--args"
+      - "dist/pollerNFL.js"
+      - "--set-env-vars"
+      - >
+        NODE_ENV=${_NODE_ENV},
+        SPORTSDATA_API_URL=${_SPORTSDATA_API_URL},
+        SPORTSDATA_API_VERSION=${_SPORTSDATA_API_VERSION},
+        SPORTSDATA_API_KEY=${_SPORTSDATA_API_KEY},
+        SUPABASE_URL=${_SUPABASE_URL},
+        SUPABASE_API_SECRET_KEY=${_SUPABASE_API_SECRET_KEY},
+        TWILIO_ACCOUNT_SID=${_TWILIO_ACCOUNT_SID},
+        TWILIO_AUTH_TOKEN=${_TWILIO_AUTH_TOKEN},
+        TWILIO_SERVICE_SID=${_TWILIO_SERVICE_SID},
+        TWILIO_FROM_NUMBER=${_TWILIO_FROM_NUMBER},
+        FRONTEND_URL=${_FRONTEND_URL}
+
+  # Step 3d: Deploy NHL poller service (long-running background loop)
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    entrypoint: "gcloud"
+    args:
+      - "run"
+      - "deploy"
+      - "${_POLLER_NHL_SERVICE_BASE}-$BRANCH_NAME"
+      - "--image"
+      - "gcr.io/$PROJECT_ID/${_IMAGE_NAME}:$SHORT_SHA"
+      - "--region"
+      - "${_REGION}"
+      - "--platform"
+      - "managed"
+      - "--no-allow-unauthenticated"
+      - "--concurrency"
+      - "1"
+      - "--max-instances"
+      - "1"
+      - "--min-instances"
+      - "1"
+      - "--no-cpu-throttling"
+      - "--args"
+      - "dist/pollerNHL.js"
+      - "--set-env-vars"
+      - >
+        NODE_ENV=${_NODE_ENV},
+        SPORTSDATA_API_URL=${_SPORTSDATA_API_URL},
+        SPORTSDATA_API_VERSION=${_SPORTSDATA_API_VERSION},
+        SPORTSDATA_API_KEY=${_SPORTSDATA_API_KEY},
+        SUPABASE_URL=${_SUPABASE_URL},
+        SUPABASE_API_SECRET_KEY=${_SUPABASE_API_SECRET_KEY},
+        TWILIO_ACCOUNT_SID=${_TWILIO_ACCOUNT_SID},
+        TWILIO_AUTH_TOKEN=${_TWILIO_AUTH_TOKEN},
+        TWILIO_SERVICE_SID=${_TWILIO_SERVICE_SID},
+        TWILIO_FROM_NUMBER=${_TWILIO_FROM_NUMBER},
+        FRONTEND_URL=${_FRONTEND_URL}
+
+  # Step 3e: Deploy CBB poller service (long-running background loop)
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    entrypoint: "gcloud"
+    args:
+      - "run"
+      - "deploy"
+      - "${_POLLER_CBB_SERVICE_BASE}-$BRANCH_NAME"
+      - "--image"
+      - "gcr.io/$PROJECT_ID/${_IMAGE_NAME}:$SHORT_SHA"
+      - "--region"
+      - "${_REGION}"
+      - "--platform"
+      - "managed"
+      - "--no-allow-unauthenticated"
+      - "--concurrency"
+      - "1"
+      - "--max-instances"
+      - "1"
+      - "--min-instances"
+      - "1"
+      - "--no-cpu-throttling"
+      - "--args"
+      - "dist/pollerCBB.js"
+      - "--set-env-vars"
+      - >
+        NODE_ENV=${_NODE_ENV},
+        SPORTSDATA_API_URL=${_SPORTSDATA_API_URL},
+        SPORTSDATA_API_VERSION=${_SPORTSDATA_API_VERSION},
+        SPORTSDATA_API_KEY=${_SPORTSDATA_API_KEY},
+        SUPABASE_URL=${_SUPABASE_URL},
+        SUPABASE_API_SECRET_KEY=${_SUPABASE_API_SECRET_KEY},
+        TWILIO_ACCOUNT_SID=${_TWILIO_ACCOUNT_SID},
+        TWILIO_AUTH_TOKEN=${_TWILIO_AUTH_TOKEN},
+        TWILIO_SERVICE_SID=${_TWILIO_SERVICE_SID},
+        TWILIO_FROM_NUMBER=${_TWILIO_FROM_NUMBER},
+        FRONTEND_URL=${_FRONTEND_URL}
+
+  # Step 3f: Deploy MLB poller service (long-running background loop)
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    entrypoint: "gcloud"
+    args:
+      - "run"
+      - "deploy"
+      - "${_POLLER_MLB_SERVICE_BASE}-$BRANCH_NAME"
+      - "--image"
+      - "gcr.io/$PROJECT_ID/${_IMAGE_NAME}:$SHORT_SHA"
+      - "--region"
+      - "${_REGION}"
+      - "--platform"
+      - "managed"
+      - "--no-allow-unauthenticated"
+      - "--concurrency"
+      - "1"
+      - "--max-instances"
+      - "1"
+      - "--min-instances"
+      - "1"
+      - "--no-cpu-throttling"
+      - "--args"
+      - "dist/pollerMLB.js"
+      - "--set-env-vars"
+      - >
+        NODE_ENV=${_NODE_ENV},
+        SPORTSDATA_API_URL=${_SPORTSDATA_API_URL},
+        SPORTSDATA_API_VERSION=${_SPORTSDATA_API_VERSION},
+        SPORTSDATA_API_KEY=${_SPORTSDATA_API_KEY},
+        SUPABASE_URL=${_SUPABASE_URL},
+        SUPABASE_API_SECRET_KEY=${_SUPABASE_API_SECRET_KEY},
+        TWILIO_ACCOUNT_SID=${_TWILIO_ACCOUNT_SID},
+        TWILIO_AUTH_TOKEN=${_TWILIO_AUTH_TOKEN},
+        TWILIO_SERVICE_SID=${_TWILIO_SERVICE_SID},
+        TWILIO_FROM_NUMBER=${_TWILIO_FROM_NUMBER},
+        FRONTEND_URL=${_FRONTEND_URL}
+
+  # Step 3g: Deploy contest worker service (long-running background loop)
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    entrypoint: "gcloud"
+    args:
+      - "run"
+      - "deploy"
+      - "${_WORKER_SERVICE_BASE}-$BRANCH_NAME"
+      - "--image"
+      - "gcr.io/$PROJECT_ID/${_IMAGE_NAME}:$SHORT_SHA"
+      - "--region"
+      - "${_REGION}"
+      - "--platform"
+      - "managed"
+      - "--no-allow-unauthenticated"
+      - "--concurrency"
+      - "1"
+      - "--max-instances"
+      - "1"
+      - "--min-instances"
+      - "1"
+      - "--no-cpu-throttling"
+      - "--args"
+      - "dist/contestWorker.js"
+      - "--set-env-vars"
+      - >
+        NODE_ENV=${_NODE_ENV},
+        SPORTSDATA_API_URL=${_SPORTSDATA_API_URL},
+        SPORTSDATA_API_VERSION=${_SPORTSDATA_API_VERSION},
+        SPORTSDATA_API_KEY=${_SPORTSDATA_API_KEY},
+        SUPABASE_URL=${_SUPABASE_URL},
+        SUPABASE_API_SECRET_KEY=${_SUPABASE_API_SECRET_KEY},
+        TWILIO_ACCOUNT_SID=${_TWILIO_ACCOUNT_SID},
+        TWILIO_AUTH_TOKEN=${_TWILIO_AUTH_TOKEN},
+        TWILIO_SERVICE_SID=${_TWILIO_SERVICE_SID},
+        TWILIO_FROM_NUMBER=${_TWILIO_FROM_NUMBER},
+        FRONTEND_URL=${_FRONTEND_URL}
+
+  # Step 3h: Deploy predictor worker service (5s polling loop — stateful, pinned to 1 instance)
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    entrypoint: "gcloud"
+    args:
+      - "run"
+      - "deploy"
+      - "${_PREDICTOR_WORKER_SERVICE_BASE}-$BRANCH_NAME"
+      - "--image"
+      - "gcr.io/$PROJECT_ID/${_IMAGE_NAME}:$SHORT_SHA"
+      - "--region"
+      - "${_REGION}"
+      - "--platform"
+      - "managed"
+      - "--no-allow-unauthenticated"
+      - "--concurrency"
+      - "1"
+      - "--min-instances"
+      - "1"
+      - "--max-instances"
+      - "1"
+      - "--no-cpu-throttling"
+      - "--args"
+      - "dist/predictorWorker.js"
+      - "--set-env-vars"
+      - >
+        NODE_ENV=${_NODE_ENV},
+        SUPABASE_URL=${_SUPABASE_URL},
+        SUPABASE_API_SECRET_KEY=${_SUPABASE_API_SECRET_KEY}
+
+  # Step 3i: Deploy trivia socket service (pinned to 1 instance — stateful Socket.IO game loop)
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    entrypoint: "gcloud"
+    args:
+      - "run"
+      - "deploy"
+      - "${_TRIVIA_SERVICE_BASE}-$BRANCH_NAME"
+      - "--image"
+      - "gcr.io/$PROJECT_ID/${_IMAGE_NAME}:$SHORT_SHA"
+      - "--region"
+      - "${_REGION}"
+      - "--platform"
+      - "managed"
+      - "--allow-unauthenticated"
+      - "--concurrency"
+      - "1000"
+      - "--min-instances"
+      - "1"
+      - "--max-instances"
+      - "1"
+      - "--no-cpu-throttling"
+      - "--args"
+      - "dist/socketServer.js"
+      - "--set-env-vars"
+      - >
+        NODE_ENV=${_NODE_ENV},
+        SUPABASE_URL=${_SUPABASE_URL},
+        SUPABASE_API_SECRET_KEY=${_SUPABASE_API_SECRET_KEY}
+
+  # Step 3j: Deploy trivia generation worker (daily Claude API question rotation)
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    entrypoint: "gcloud"
+    args:
+      - "run"
+      - "deploy"
+      - "${_TRIVIA_WORKER_SERVICE_BASE}-$BRANCH_NAME"
+      - "--image"
+      - "gcr.io/$PROJECT_ID/${_IMAGE_NAME}:$SHORT_SHA"
+      - "--region"
+      - "${_REGION}"
+      - "--platform"
+      - "managed"
+      - "--no-allow-unauthenticated"
+      - "--concurrency"
+      - "1"
+      - "--min-instances"
+      - "1"
+      - "--max-instances"
+      - "1"
+      - "--no-cpu-throttling"
+      - "--args"
+      - "dist/triviaWorker.js"
+      - "--set-env-vars"
+      - >
+        NODE_ENV=${_NODE_ENV},
+        SUPABASE_URL=${_SUPABASE_URL},
+        SUPABASE_API_SECRET_KEY=${_SUPABASE_API_SECRET_KEY},
+        ANTHROPIC_AI_KEY=${_ANTHROPIC_AI_KEY}
+
+logsBucket: "${_LOGS_BUCKET}"
+options:
+  logging: GCS_ONLY
+
+images:
+  - "gcr.io/$PROJECT_ID/${_IMAGE_NAME}:$SHORT_SHA"
