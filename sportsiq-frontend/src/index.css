@@ -1,0 +1,125 @@
+@import "tailwindcss";
+
+html,
+body,
+#root {
+  font-family: "Lexend", sans-serif;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+/* Fixed-canvas scaling variables */
+:root {
+  --base-width: 1920px;
+  --base-height: 1080px;
+}
+
+/* Viewport wrapper centers a fixed-aspect canvas and letterboxes gracefully */
+.display-viewport {
+  position: fixed;
+  inset: 0;
+  background: #0b2230; /* match base background */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.display-canvas {
+  width: var(--base-width);
+  height: var(--base-height);
+  transform-origin: top left;
+  will-change: transform;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+  text-rendering: optimizeLegibility;
+}
+
+@theme {
+  --color-left-500: #0d2847; /* Left team color */
+  --color-right-500: #0f4c4c; /* Right team color */
+}
+
+.bg-dual-radial {
+  --bg: #0b2230; /* base background */
+  --left-hex: #0e2b48; /* left color in HEX */
+  --right-hex: #10535c; /* right color in HEX */
+
+  background:
+    /* LEFT blob */ radial-gradient(
+      150% 150% at 0% 0%,
+      color-mix(in srgb, var(--left-hex) 100%, transparent) 0%,
+      /* full color at the corner */
+        color-mix(in srgb, var(--left-hex) 75%, transparent) 20%,
+      /* strong fade */ color-mix(in srgb, var(--left-hex) 40%, transparent) 45%,
+      transparent 60%
+    ),
+    /* RIGHT blob */
+      radial-gradient(
+        150% 150% at 100% 0%,
+        color-mix(in srgb, var(--right-hex) 100%, transparent) 0%,
+        color-mix(in srgb, var(--right-hex) 75%, transparent) 20%,
+        color-mix(in srgb, var(--right-hex) 40%, transparent) 45%,
+        transparent 60%
+      ),
+    var(--bg);
+
+  background-clip: padding-box;
+}
+
+@property --border-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes border {
+  to {
+    --border-angle: 360deg;
+  }
+}
+
+.animate-border {
+  animation: border 4s linear infinite;
+}
+
+::-webkit-scrollbar {
+  width: 1px;
+  height: 1px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #5545d3;
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar:horizontal {
+  height: 1px;
+}
+
+::-webkit-scrollbar:vertical {
+  width: 1px;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #5545d399 transparent;
+}
+
+.swiper-pagination-bullet {
+  background: #999999 !important;
+  width: 12px !important;
+  height: 12px !important;
+}
+
+.swiper-pagination-bullet-active {
+  background: #5545d3 !important;
+}
