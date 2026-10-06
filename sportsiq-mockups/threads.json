@@ -1,0 +1,326 @@
+{
+  "test": [],
+  "home-live-v4": [
+    {
+      "from": "mark",
+      "text": "1. pick locked\n2. tug of war would be nice\n3. as is",
+      "ts": "Mar 21 3:09 PM"
+    },
+    {
+      "from": "mark",
+      "text": "1. pick locked 2. tug of war would be nice 3. as is",
+      "ts": "Mar 21 7:56 PM"
+    },
+    {
+      "from": "mark",
+      "text": "1. pick locked 2. tug of war would be nice 3. as is",
+      "ts": "Mar 21 7:59 PM"
+    },
+    {
+      "from": "mark",
+      "text": "1. pick locked 2. tug of war would be nice 3. as is",
+      "ts": "Mar 21 8:01 PM"
+    }
+  ],
+  "home-idle-v3": [
+    {
+      "from": "mark",
+      "text": "1. i dont understand, explain\n2. hint\n3. combine",
+      "ts": "Mar 21 3:10 PM"
+    },
+    {
+      "from": "mark",
+      "text": "1. i dont understand, explain 2. hint 3. combine",
+      "ts": "Mar 21 8:06 PM"
+    }
+  ],
+  "pick-card-v3": [
+    {
+      "from": "mark",
+      "text": "1. high stakes\n2. SportsIQ Fignal\n3. show a number but make it real. why are we showing a fake number?",
+      "ts": "Mar 21 3:11 PM"
+    },
+    {
+      "from": "mark",
+      "text": "1. high stakes 2. SportsIQ Fignal 3. show a number but make it real. why are we showing a fake number?",
+      "ts": "Mar 21 9:08 PM"
+    }
+  ],
+  "pick-wait-v3": [
+    {
+      "from": "mark",
+      "text": "1. exciting\n2. before\n3. snap to result",
+      "ts": "Mar 21 3:12 PM"
+    },
+    {
+      "from": "mark",
+      "text": "1. exciting 2. before 3. snap to result",
+      "ts": "Mar 21 9:09 PM"
+    }
+  ],
+  "onboarding-v3": [
+    {
+      "from": "mark",
+      "text": "1. passively\n2. you decide\n3. yes demo pick",
+      "ts": "Mar 21 3:13 PM"
+    },
+    {
+      "from": "mark",
+      "text": "1. passively 2. you decide 3. yes demo pick",
+      "ts": "Mar 21 9:25 PM"
+    }
+  ],
+  "daily-challenge-v3": [
+    {
+      "from": "mark",
+      "text": "1 show actual picks\n2. we decided on 6pm in users local time\n3. immediately",
+      "ts": "Mar 21 3:14 PM"
+    },
+    {
+      "from": "mark",
+      "text": "1 show actual picks 2. we decided on 6pm in users local time 3. immediately",
+      "ts": "Mar 21 9:25 PM"
+    }
+  ],
+  "game-day-v3": [
+    {
+      "from": "mark",
+      "text": "1. replace\n2. striking distance\n3. we dont want venue owner to do anything",
+      "ts": "Mar 21 3:15 PM"
+    },
+    {
+      "from": "mark",
+      "text": "1. replace 2. striking distance 3. we dont want venue owner to do anything",
+      "ts": "Mar 21 9:25 PM"
+    }
+  ],
+  "notifications-v2": [
+    {
+      "from": "mark",
+      "text": "1. simple\n2. use real game stats for everything\n3. auto-learn",
+      "ts": "Mar 21 3:15 PM"
+    },
+    {
+      "from": "mark",
+      "text": "1. simple 2. use real game stats for everything 3. auto-learn",
+      "ts": "Mar 21 9:25 PM"
+    },
+    {
+      "from": "mark",
+      "text": "1. simple 2. use real game stats for everything 3. auto-learn",
+      "ts": "Mar 21 10:58 PM"
+    }
+  ],
+  "my-stats-v2": [
+    {
+      "from": "mark",
+      "text": "1. you decide\n2. you deicde\n3. too dense to show always, you can show his record against Mike when he is going to play H2H agianst mike again\n4. too dense to show always\n\nthis data is all great but we cant show all of it all the time. you needs to decide what is best to show and when its best to show it",
+      "ts": "Mar 21 3:17 PM"
+    },
+    {
+      "from": "mark",
+      "text": "1. you decide 2. you deicde 3. too dense to show always, you can show his record against Mike when he is going to play H2H agianst mike again 4. too dense to show always this data is all great but we cant show all of it all the time. you needs to decide what is best to show and when its best to show it",
+      "ts": "Mar 21 9:25 PM"
+    }
+  ],
+  "leaderboard-v3": [
+    {
+      "from": "mark",
+      "text": "1. I like both. But we should use Today instead of Tonight\n2. yes, why do we need opt? we should always show this\n3. I dont understand this, explain.",
+      "ts": "Mar 21 3:19 PM"
+    },
+    {
+      "from": "mark",
+      "text": "1. I like both. But we should use Today instead of Tonight 2. yes, why do we need opt? we should always show this 3. I dont understand this, explain.",
+      "ts": "Mar 21 9:25 PM"
+    }
+  ],
+  "sports-dna-v2": [
+    {
+      "from": "mark",
+      "text": "1. its good\n2. surface their best automatically\n3. earned only",
+      "ts": "Mar 21 3:20 PM"
+    },
+    {
+      "from": "mark",
+      "text": "1. its good 2. surface their best automatically 3. earned only",
+      "ts": "Mar 21 10:58 PM"
+    }
+  ],
+  "referral-v2": [
+    {
+      "from": "mark",
+      "text": "1. a/b test\n2. we need to discuss expiration of points in a comprehensive way. Lets find a policy that is optimal across the whole app and ecosystem\n3. should unlock something real",
+      "ts": "Mar 21 4:00 PM"
+    },
+    {
+      "from": "mark",
+      "text": "1. a/b test 2. we need to discuss expiration of points in a comprehensive way. Lets find a policy that is optimal across the whole app and ecosystem 3. should unlock something real",
+      "ts": "Mar 21 10:59 PM"
+    }
+  ],
+  "trivia": [
+    {
+      "from": "mark",
+      "text": "1. Continuous mode\n2. Yes — show Trivia IQ Score on home screen\n3. We trigger it, not venue\n4. NBA, NFL, NHL, MLB, college basketball, college football",
+      "ts": "Mar 20 11:16 PM"
+    },
+    {
+      "from": "claude",
+      "text": "All 4 implemented ✅\n• Continuous mode — \"Question 3 of ∞\" now shown on trivia screen\n• Trivia IQ 847 added to home idle hero row\n• Bar trivia description updated: SportsIQ triggers rounds, venues don't manage it\n• All 6 sports (NFL/NBA/NHL/MLB/CFB/CBB) with accuracy bars on stats panel\nNew questions above — ready for your next round of feedback.",
+      "ts": "Mar 21 9:20 AM"
+    },
+    {
+      "from": "mark",
+      "text": "1. keep it easy withiout being way too easy. we want the average user to get 70% correct\n2. not sure, make a reccomendation\n3. on the tv screen\n4. 100% curated by sportsiq\n\nto clarify when it comes to playing trivia on phone oir in bar:\nwe dont want lock in answer button. when a user chooses an ansewr its locked in. if they choose a different anseerr it is liocked in. they earn points based on how much time remained when they locked in thoer final answer. we already buyilt this logic before.\n\nther should not be a next question button. the flow is. question displayed, 10 seconds countdoen, answer is reveealed ad shown for 5 seconds. we already built this logic before\n\nif these designs are meant only to apply to some separate daily thing that happens in addition to our trivia thats fine if you want to do this, but I think there is value in keeping all of our screens and looks very consistent",
+      "ts": "Mar 21 10:10 AM"
+    },
+    {
+      "from": "mark",
+      "text": "1. keep it easy withiout being way too easy. we want the average user to get 70% correct 2. not sure, make a reccomendation 3. on the tv screen 4. 100% curated by sportsiq",
+      "ts": "Mar 21 4:02 PM"
+    },
+    {
+      "from": "mark",
+      "text": "1. keep it easy withiout being way too easy. we want the average user to get 70% correct 2. not sure, make a reccomendation 3. on the tv screen 4. 100% curated by sportsiq",
+      "ts": "Mar 21 10:59 PM"
+    }
+  ],
+  "challenges-v3": [
+    {
+      "from": "mark",
+      "text": "1. unitfed\n2. unified\n3. bar challenge if within .15 miles of a bar",
+      "ts": "Mar 21 4:05 PM"
+    },
+    {
+      "from": "mark",
+      "text": "1. unitfed 2. unified 3. bar challenge if within .15 miles of a bar",
+      "ts": "Mar 21 10:59 PM"
+    }
+  ],
+  "head-to-head": [
+    {
+      "from": "mark",
+      "text": "1. real IQ points\n2. yes - make sure this works well though\n3. clarify what we are doing with H2H and groups. this should be simple and intuitive. we shouldnt have one feature for 2 players and another for a group.\n4. make a recommendation\n\nwhy is everyhing scrunched up to the top of the screen with big gaps. lay this out better",
+      "ts": "Mar 21 9:59 AM"
+    },
+    {
+      "from": "mark",
+      "text": "1. real IQ points 2. yes - make sure this works well though 3. clarify what we are doing with H2H and groups. this should be simple and intuitive. we shouldnt have one feature for 2 players and another for a group. 4. make a recommendation",
+      "ts": "Mar 21 4:05 PM"
+    },
+    {
+      "from": "mark",
+      "text": "1. real IQ points 2. yes - make sure this works well though 3. clarify what we are doing with H2H and groups. this should be simple and intuitive. we shouldnt have one feature for 2 players and another for a group. 4. make a recommendation",
+      "ts": "Mar 21 10:59 PM"
+    }
+  ],
+  "friends-feed-v1": [
+    {
+      "from": "mark",
+      "text": "1. reactions but keep it simple\n2. before\n3. manual\n4. all friends",
+      "ts": "Mar 21 4:19 PM"
+    },
+    {
+      "from": "mark",
+      "text": "1. reactions but keep it simple 2. before 3. manual 4. all friends",
+      "ts": "Mar 21 11:00 PM"
+    }
+  ],
+  "bar-idle-v4": [
+    {
+      "from": "mark",
+      "text": "1. all of those are good\n2. not in this version, maybe down the road\n3. today only\n\nleaderboard too wide and left panel is too narrow (room code should fit on one line)",
+      "ts": "Mar 21 4:07 PM"
+    },
+    {
+      "from": "mark",
+      "text": "1. all of those are good 2. not in this version, maybe down the road 3. today only leaderboard too wide and left panel is too narrow (room code should fit on one line)",
+      "ts": "Mar 21 11:00 PM"
+    }
+  ],
+  "bar-tracking-v3": [
+    {
+      "from": "mark",
+      "text": "1. you decide\n2. yes, add it if there is space\n3. dramatic\n\nimporve the vertical spacing in state 1",
+      "ts": "Mar 21 4:09 PM"
+    },
+    {
+      "from": "mark",
+      "text": "1. you decide 2. yes, add it if there is space 3. dramatic imporve the vertical spacing in state 1",
+      "ts": "Mar 21 11:00 PM"
+    }
+  ],
+  "bar-result-v3": [
+    {
+      "from": "mark",
+      "text": "1. We need to pick one - you choose best\n2. 3+ is good\n3. bar owners should not decide anything\n\nimprove vertical spacing",
+      "ts": "Mar 21 4:11 PM"
+    },
+    {
+      "from": "mark",
+      "text": "1. We need to pick one - you choose best 2. 3+ is good 3. bar owners should not decide anything improve vertical spacing",
+      "ts": "Mar 21 11:01 PM"
+    }
+  ],
+  "trivia-v3": [
+    {
+      "from": "mark",
+      "text": "1. we built this before - user can change thoer mind but they get more points the more time remains when they make thoer final pick\n2. fun and contextual\n3. 5 seconds\n\nimprove vertical spacing",
+      "ts": "Mar 21 4:12 PM"
+    },
+    {
+      "from": "mark",
+      "text": "1. we built this before - user can change thoer mind but they get more points the more time remains when they make thoer final pick 2. fun and contextual 3. 5 seconds improve vertical spacing",
+      "ts": "Mar 21 11:01 PM"
+    }
+  ],
+  "mkt-intel-v2": [
+    {
+      "from": "mark",
+      "text": "1. we can use multiple as long as they all have value\n2. breaks the flow\n3. significant\n\nimprove vertical spacing",
+      "ts": "Mar 21 4:14 PM"
+    },
+    {
+      "from": "mark",
+      "text": "1. we can use multiple as long as they all have value 2. breaks the flow 3. significant improve vertical spacing",
+      "ts": "Mar 21 11:01 PM"
+    }
+  ],
+  "venue-dashboard-v2": [
+    {
+      "from": "mark",
+      "text": "1. owner should not have to do anything\n2. give me some recommendations. should be accurate and powerful\n3. web only is acceptable for v1",
+      "ts": "Mar 21 4:15 PM"
+    },
+    {
+      "from": "mark",
+      "text": "1. owner should not have to do anything 2. give me some recommendations. should be accurate and powerful 3. web only is acceptable for v1",
+      "ts": "Mar 21 11:01 PM"
+    }
+  ],
+  "venue-onboarding-v2": [
+    {
+      "from": "mark",
+      "text": "1. admin inside main app\n2. lets discuss this further. we need a rock solid plan here\n3. 30 day free",
+      "ts": "Mar 21 4:16 PM"
+    },
+    {
+      "from": "mark",
+      "text": "1. admin inside main app 2. lets discuss this further. we need a rock solid plan here 3. 30 day free",
+      "ts": "Mar 21 11:01 PM"
+    }
+  ],
+  "data-intelligence-v2": [
+    {
+      "from": "mark",
+      "text": "1.  just eperience the personalization. lets keep it private for internal sportsIQ use only for now\n2. bar regular is fun\n3. embedded in home idle screen",
+      "ts": "Mar 21 4:18 PM"
+    },
+    {
+      "from": "mark",
+      "text": "1. just eperience the personalization. lets keep it private for internal sportsIQ use only for now 2. bar regular is fun 3. embedded in home idle screen",
+      "ts": "Mar 21 11:01 PM"
+    }
+  ]
+}
