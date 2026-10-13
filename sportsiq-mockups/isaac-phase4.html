@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SportsIQ — Phase 4 (Isaac)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #050912; --brand: #5545D3; --teal: #228C88; --green: #22C55E;
+  --red: #EF4444; --amber: #F59E0B; --text: #F8FAFC; --muted: #94A3B8;
+  --faint: #64748B; --border: rgba(85,69,211,0.3); --card: rgba(255,255,255,0.05);
+  --cardBorder: rgba(255,255,255,0.09);
+}
+body { font-family: 'Inter', sans-serif; background: #020408; color: var(--text); min-height: 100vh; }
+
+/* ── Header ─────────────────────────────────────── */
+.page-header {
+  background: linear-gradient(135deg, #0B0F1F 0%, #12082A 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 36px 48px 28px;
+}
+.page-header h1 { font-family: 'Lexend', sans-serif; font-size: 28px; font-weight: 900; color: var(--text); margin-bottom: 8px; }
+.page-header h1 span { color: #7C6EF5; }
+.page-subtitle { font-size: 15px; color: var(--muted); line-height: 1.7; max-width: 700px; }
+.doc-link {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(85,69,211,0.15); border: 1px solid var(--border);
+  color: #A89DF8; text-decoration: none; font-size: 13px; font-weight: 600;
+  padding: 8px 16px; border-radius: 8px; margin-top: 16px;
+}
+.doc-link:hover { background: rgba(85,69,211,0.25); }
+
+/* ── Section ────────────────────────────────────── */
+.section { padding: 48px 48px 8px; }
+.section-title {
+  font-family: 'Lexend', sans-serif; font-size: 20px; font-weight: 900;
+  color: var(--text); margin-bottom: 6px;
+}
+.section-sub { font-size: 14px; color: var(--muted); margin-bottom: 32px; line-height: 1.65; }
+
+/* ── File pill ───────────────────────────────────── */
+.file-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(34,140,136,0.12); border: 1px solid rgba(34,140,136,0.3);
+  color: #4DD9D5; font-size: 11px; font-weight: 700; font-family: monospace;
+  padding: 4px 10px; border-radius: 6px; margin: 2px 4px;
+}
+.file-pill.new { background: rgba(34,197,94,0.1); border-color: rgba(34,197,94,0.3); color: #4ADE80; }
+.file-pill.warn { background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.3); color: #FCD34D; }
+
+/* ── Badge ───────────────────────────────────────── */
+.badge {
+  display: inline-block; font-size: 10px; font-weight: 800;
+  padding: 3px 8px; border-radius: 4px; letter-spacing: 0.5px;
+}
+.badge-done { background: rgba(34,197,94,0.15); color: #4ADE80; }
+.badge-build { background: rgba(85,69,211,0.2); color: #A89DF8; }
+.badge-review { background: rgba(245,158,11,0.15); color: #FCD34D; }
+
+/* ── Phone frames ────────────────────────────────── */
+.phones-row {
+  display: flex; gap: 32px; flex-wrap: wrap; justify-content: flex-start;
+  padding: 16px 0 40px; align-items: flex-start;
+}
+.phone-wrap { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.phone-label {
+  font-size: 11px; font-weight: 700; color: var(--faint);
+  letter-spacing: 1.5px; text-transform: uppercase; text-align: center;
+}
+.phone-frame {
+  width: 320px; height: 680px;
+  background: var(--bg); border-radius: 44px; overflow: hidden;
+  border: 1.5px solid rgba(255,255,255,0.12);
+  box-shadow: 0 0 0 5px rgba(0,0,0,0.6), 0 30px 70px rgba(0,0,0,0.8), 0 0 60px rgba(85,69,211,0.06);
+  position: relative;
+}
+.phone-notch {
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 100px; height: 26px; background: #000; border-radius: 0 0 14px 14px; z-index: 10;
+}
+.phone-inner { padding: 32px 0 0; height: 100%; display: flex; flex-direction: column; }
+.phone-status {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 4px 18px 0; font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.5);
+}
+
+/* ── Persistent header ───────────────────────────── */
+.pheader {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 16px; border-bottom: 1px solid var(--cardBorder);
+  background: rgba(5,9,18,0.98);
+}
+.pheader-logo { font-family: 'Lexend', sans-serif; font-size: 14px; font-weight: 900; }
+.pheader-logo span { color: #7C6EF5; }
+.iq-chip {
+  background: rgba(85,69,211,0.2); border: 1px solid rgba(85,69,211,0.5);
+  border-radius: 20px; padding: 4px 10px;
+  font-size: 11px; font-weight: 800; color: #A89DF8;
+  display: flex; align-items: center; gap: 5px;
+}
+.iq-dot { width: 6px; height: 6px; border-radius: 50%; background: #7C6EF5; }
+
+/* ── Swipe indicator ────────────────────────────── */
+.swipe-dots {
+  display: flex; justify-content: center; gap: 6px; padding: 8px 0;
+}
+.sdot {
+  width: 20px; height: 3px; border-radius: 2px;
+  background: rgba(255,255,255,0.15);
+}
+.sdot.active { background: #7C6EF5; width: 28px; }
+
+/* ── Trivia game ─────────────────────────────────── */
+.trivia-lobby {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; padding: 20px 16px; gap: 16px;
+}
+.trivia-countdown {
+  width: 80px; height: 80px; border-radius: 50%;
+  border: 3px solid #7C6EF5;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; font-weight: 900; color: #A89DF8;
+  background: rgba(85,69,211,0.1);
+}
+.trivia-label { font-size: 18px; font-weight: 800; color: var(--text); text-align: center; }
+.trivia-sub { font-size: 12px; color: var(--muted); text-align: center; }
+.trivia-players {
+  display: flex; gap: -4px; align-items: center;
+  background: var(--card); border: 1px solid var(--cardBorder);
+  border-radius: 20px; padding: 6px 12px; gap: 8px;
+  font-size: 11px; color: var(--muted);
+}
+.avatar-stack { display: flex; }
+.av {
+  width: 22px; height: 22px; border-radius: 50%;
+  border: 1.5px solid var(--bg);
+  font-size: 9px; font-weight: 800; display: flex; align-items: center; justify-content: center;
+  margin-left: -5px;
+}
+.av:first-child { margin-left: 0; }
+
+.trivia-question {
+  flex: 1; padding: 16px;
+  display: flex; flex-direction: column; gap: 12px;
+}
+.q-progress { display: flex; gap: 4px; }
+.q-prog-dot {
+  flex: 1; height: 3px; border-radius: 2px; background: rgba(255,255,255,0.1);
+}
+.q-prog-dot.done { background: #22C55E; }
+.q-prog-dot.active { background: #7C6EF5; }
+.q-timer {
+  font-size: 11px; font-weight: 700; color: var(--muted);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.q-timer-bar {
+  height: 3px; background: rgba(255,255,255,0.08); border-radius: 2px; margin-bottom: 12px;
+}
+.q-timer-fill { height: 100%; width: 65%; background: #7C6EF5; border-radius: 2px; }
+.q-text { font-size: 14px; font-weight: 700; color: var(--text); line-height: 1.5; }
+.q-answers { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+.q-ans {
+  padding: 10px 14px; border-radius: 10px;
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+  font-size: 12px; font-weight: 600; color: var(--muted);
+}
+.q-ans.selected { background: rgba(85,69,211,0.2); border-color: #7C6EF5; color: var(--text); }
+.q-ans.correct { background: rgba(34,197,94,0.15); border-color: #22C55E; color: #4ADE80; }
+
+/* ── Pick card ───────────────────────────────────── */
+.pick-section { padding: 12px 16px; }
+.game-banner {
+  background: rgba(255,255,255,0.04); border: 1px solid var(--cardBorder);
+  border-radius: 12px; padding: 12px 14px;
+}
+.game-teams {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 13px; font-weight: 800; color: var(--text); margin-bottom: 8px;
+}
+.game-vs { font-size: 11px; font-weight: 700; color: var(--faint); }
+.pick-q { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+.pick-btns { display: flex; gap: 8px; }
+.pick-btn {
+  flex: 1; padding: 9px; border-radius: 10px; text-align: center;
+  font-size: 12px; font-weight: 800;
+}
+.pick-btn-yes { background: rgba(34,197,94,0.15); border: 1px solid rgba(34,197,94,0.4); color: #4ADE80; }
+.pick-btn-no { background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.3); color: #FCA5A5; }
+.signal-bar {
+  display: flex; gap: 4px; align-items: center; margin-top: 8px;
+  font-size: 10px; color: var(--faint);
+}
+.signal-fill { height: 4px; border-radius: 2px; background: #4ADE80; }
+.signal-fill2 { height: 4px; border-radius: 2px; background: #FCA5A5; }
+
+/* ── Result screen ───────────────────────────────── */
+.result-content { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 16px; gap: 12px; }
+.result-win-bg {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 30%, rgba(34,197,94,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+.result-badge {
+  width: 64px; height: 64px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; font-size: 28px;
+}
+.result-badge-win { background: rgba(34,197,94,0.15); border: 2px solid rgba(34,197,94,0.4); }
+.result-badge-loss { background: rgba(239,68,68,0.1); border: 2px solid rgba(239,68,68,0.25); }
+.result-badge-pending { background: rgba(85,69,211,0.15); border: 2px solid rgba(85,69,211,0.3); }
+.result-iq { font-size: 32px; font-weight: 900; color: #4ADE80; text-align: center; }
+.result-iq-loss { font-size: 32px; font-weight: 900; color: #FCA5A5; text-align: center; }
+.result-pick { font-size: 12px; color: var(--muted); text-align: center; }
+.result-share-btn {
+  width: 100%; padding: 12px; border-radius: 12px; text-align: center;
+  background: rgba(34,197,94,0.15); border: 1px solid rgba(34,197,94,0.35);
+  font-size: 13px; font-weight: 800; color: #4ADE80; margin-top: 4px;
+}
+.result-next-btn {
+  width: 100%; padding: 12px; border-radius: 12px; text-align: center;
+  background: rgba(85,69,211,0.2); border: 1px solid rgba(85,69,211,0.4);
+  font-size: 13px; font-weight: 800; color: #A89DF8;
+}
+.stat-row {
+  display: flex; gap: 8px; width: 100%;
+}
+.stat-box {
+  flex: 1; background: var(--card); border: 1px solid var(--cardBorder);
+  border-radius: 10px; padding: 10px; text-align: center;
+}
+.stat-val { font-size: 16px; font-weight: 900; color: var(--text); }
+.stat-lab { font-size: 9px; font-weight: 700; color: var(--faint); text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+
+/* ── Pending state ───────────────────────────────── */
+.pending-card {
+  width: 100%; background: var(--card); border: 1px solid var(--cardBorder);
+  border-radius: 14px; padding: 16px; text-align: center;
+}
+.live-score { font-size: 22px; font-weight: 900; color: var(--text); margin: 8px 0; }
+.live-label { font-size: 11px; color: var(--muted); }
+.rank-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(85,69,211,0.15); border: 1px solid rgba(85,69,211,0.3);
+  border-radius: 20px; padding: 5px 12px;
+  font-size: 12px; font-weight: 700; color: #A89DF8;
+}
+
+/* ── Leaderboard ─────────────────────────────────── */
+.lb-tabs {
+  display: flex; border-bottom: 1px solid var(--cardBorder);
+  padding: 0 16px;
+}
+.lb-tab {
+  padding: 10px 12px; font-size: 11px; font-weight: 700; color: var(--faint);
+  border-bottom: 2px solid transparent;
+}
+.lb-tab.active { color: var(--text); border-bottom-color: #7C6EF5; }
+.lb-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 16px; border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.lb-row.me { background: rgba(85,69,211,0.07); }
+.lb-rank { width: 22px; font-size: 11px; font-weight: 800; color: var(--faint); text-align: center; }
+.lb-av {
+  width: 32px; height: 32px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 800; color: white;
+}
+.lb-info { flex: 1; }
+.lb-name { font-size: 12px; font-weight: 700; color: var(--text); }
+.lb-record { font-size: 10px; color: var(--faint); }
+.lb-iq { font-size: 13px; font-weight: 900; color: #A89DF8; }
+.podium-row {
+  display: flex; justify-content: center; align-items: flex-end;
+  gap: 8px; padding: 16px 16px 8px;
+}
+.podium-item { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.podium-av {
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-weight: 800; color: white;
+}
+.podium-place { font-size: 9px; font-weight: 800; color: var(--faint); }
+.podium-name { font-size: 10px; font-weight: 700; color: var(--text); }
+.podium-score { font-size: 11px; font-weight: 900; color: #A89DF8; }
+
+/* ── Settings modal ──────────────────────────────── */
+.settings-sheet {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: #0D1124; border-radius: 20px 20px 0 0;
+  border-top: 1px solid var(--cardBorder);
+  padding: 8px 0 24px;
+}
+.sheet-handle {
+  width: 36px; height: 4px; border-radius: 2px;
+  background: rgba(255,255,255,0.2); margin: 8px auto 16px;
+}
+.sheet-section { padding: 8px 16px; }
+.sheet-label { font-size: 9px; font-weight: 800; color: var(--faint); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+.sheet-stats { display: flex; gap: 8px; margin-bottom: 8px; }
+.sheet-stat { flex: 1; background: var(--card); border: 1px solid var(--cardBorder); border-radius: 8px; padding: 8px; text-align: center; }
+.sheet-stat-val { font-size: 14px; font-weight: 900; color: var(--text); }
+.sheet-stat-lab { font-size: 9px; color: var(--faint); }
+.sheet-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.04);
+  font-size: 12px; color: var(--muted);
+}
+.toggle-on { width: 28px; height: 16px; border-radius: 8px; background: #7C6EF5; display: flex; align-items: center; padding: 2px; justify-content: flex-end; }
+.toggle-off { width: 28px; height: 16px; border-radius: 8px; background: rgba(255,255,255,0.15); display: flex; align-items: center; padding: 2px; }
+.toggle-knob { width: 12px; height: 12px; border-radius: 50%; background: white; }
+
+/* ── Info boxes ──────────────────────────────────── */
+.info-box {
+  background: rgba(85,69,211,0.08); border: 1px solid rgba(85,69,211,0.2);
+  border-radius: 10px; padding: 14px 16px; margin-bottom: 16px;
+  font-size: 13px; color: var(--muted); line-height: 1.65;
+}
+.info-box strong { color: var(--text); }
+.info-box.green { background: rgba(34,197,94,0.06); border-color: rgba(34,197,94,0.2); }
+.info-box.amber { background: rgba(245,158,11,0.06); border-color: rgba(245,158,11,0.2); }
+
+.divider { border: none; border-top: 1px solid var(--cardBorder); margin: 40px 0; }
+.small { font-size: 12px; color: var(--faint); line-height: 1.7; }
+.code { font-family: monospace; background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px; font-size: 12px; color: #A89DF8; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════
+     HEADER
+═══════════════════════════════════════════════ -->
+<div class="page-header">
+  <h1>Sports<span>IQ</span> — Phase 4</h1>
+  <p class="page-subtitle">
+    Implement the 3-screen mobile architecture. The app has 3 screens navigated by horizontal swipe:
+    <strong>Play ← → Result ← → Leaderboard.</strong>
+    No bottom tab bar. Trivia is always running as the default — users always have something to play.
+  </p>
+  <a class="doc-link" href="https://docs.google.com/document/d/1JWzi4c0MHZfN1i7f-8BLmuTkpavtblCmGZ70R_2wBpU/edit" target="_blank">
+    📄 Full spec doc (Google Docs)
+  </a>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     NAVIGATION STRUCTURE
+═══════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">Navigation Structure</div>
+  <div class="section-sub">Replace the 4-tab navigator with a 3-page horizontal swipe layout. The persistent header sits above all 3 pages.</div>
+
+  <div class="info-box amber">
+    <strong>File to change:</strong> <span class="code">app/(app)/(tabs)/_layout.tsx</span><br>
+    Replace <span class="code">Tabs</span> navigator with a <span class="code">PagerView</span> or horizontal <span class="code">ScrollView</span> with 3 pages. Remove <span class="code">tabBarStyle</span> entirely.
+  </div>
+
+  <div class="info-box">
+    <strong>Persistent header</strong> with the SportsIQ logo (left) and IQ chip (right) sits above all 3 pages.
+    The IQ chip tap opens the Settings modal. This header is always visible on all screens.<br><br>
+    <strong>Swipe indicator:</strong> 3 dots at the bottom showing which screen is active (like stories pagination).
+  </div>
+
+  <div class="phones-row">
+    <div class="phone-wrap">
+      <div class="phone-label">Navigation Shell</div>
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-inner">
+          <div class="phone-status"><span>9:41</span><span>●●●</span></div>
+          <!-- Persistent header -->
+          <div class="pheader">
+            <div class="pheader-logo">Sports<span>IQ</span></div>
+            <div class="iq-chip"><div class="iq-dot"></div>2,450 IQ</div>
+          </div>
+          <!-- Page content area -->
+          <div style="flex:1; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:20px; padding:20px 14px;">
+            <div style="font-size:11px; font-weight:700; color:var(--faint); text-transform:uppercase; letter-spacing:2px;">Swipe pages</div>
+            <div style="display:flex; gap:8px; width:100%;">
+              <div style="flex:1; background:rgba(85,69,211,0.15); border:1px solid rgba(85,69,211,0.4); border-radius:12px; padding:12px 6px; text-align:center; min-width:0;">
+                <div style="font-size:10px; font-weight:800; color:#A89DF8;">SCREEN 1</div>
+                <div style="font-size:13px; font-weight:900; color:var(--text); margin-top:4px;">PLAY</div>
+                <div style="font-size:9px; color:var(--faint); margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">index.tsx</div>
+              </div>
+              <div style="flex:1; background:var(--card); border:1px solid var(--cardBorder); border-radius:12px; padding:12px 6px; text-align:center; min-width:0;">
+                <div style="font-size:10px; font-weight:800; color:var(--faint);">SCREEN 2</div>
+                <div style="font-size:13px; font-weight:900; color:var(--text); margin-top:4px;">RESULT</div>
+                <div style="font-size:9px; color:var(--faint); margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">ResultScreen.tsx</div>
+              </div>
+              <div style="flex:1; background:var(--card); border:1px solid var(--cardBorder); border-radius:12px; padding:12px 6px; text-align:center; min-width:0;">
+                <div style="font-size:10px; font-weight:800; color:var(--faint);">SCREEN 3</div>
+                <div style="font-size:13px; font-weight:900; color:var(--text); margin-top:4px;">LEADERS</div>
+                <div style="font-size:9px; color:var(--faint); margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">Leaderboard.tsx</div>
+              </div>
+            </div>
+            <div style="font-size:12px; color:var(--muted); text-align:center; line-height:1.6;">
+              Tap IQ chip → Settings modal<br>
+              <span style="color:var(--faint);">SettingsModal.tsx</span>
+            </div>
+          </div>
+          <!-- Swipe dots -->
+          <div class="swipe-dots" style="padding-bottom:20px;">
+            <div class="sdot active"></div><div class="sdot"></div><div class="sdot"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ═══════════════════════════════════════════════
+     SCREEN 1 — PLAY
+═══════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">Screen 1 — Play</div>
+  <div class="section-sub">
+    <span class="file-pill">app/(app)/(tabs)/index.tsx</span>
+    <span class="badge badge-review">Review AI changes</span>
+    <br><br>
+    The Play screen has two states. <strong>Trivia is always running</strong> — games every 30 seconds — so users always have something when they open the app. When a live sports game is available, a pick card appears above the trivia game.
+  </div>
+
+  <div class="info-box green">
+    <strong>Default state (most of the time):</strong> No live sports game. Show the TriviaGame component immediately.<br>
+    Trivia auto-cycles every 30 seconds. Import <span class="code">components/TriviaGame.tsx</span> — it's already fully wired to the socket.
+  </div>
+
+  <div class="info-box">
+    <strong>When a live game is available:</strong> Show a pick card at the top, trivia below.<br>
+    Pick card taps open <span class="code">app/(app)/pick-card.tsx</span> (full-screen modal or push route).
+  </div>
+
+  <div class="phones-row">
+    <!-- State A: Trivia default -->
+    <div class="phone-wrap">
+      <div class="phone-label">State A — Trivia Lobby (default)</div>
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-inner">
+          <div class="phone-status"><span>9:41</span><span>●●●</span></div>
+          <div class="pheader">
+            <div class="pheader-logo">Sports<span>IQ</span></div>
+            <div class="iq-chip"><div class="iq-dot"></div>2,450 IQ</div>
+          </div>
+          <div class="swipe-dots"><div class="sdot active"></div><div class="sdot"></div><div class="sdot"></div></div>
+          <!-- Trivia lobby -->
+          <div class="trivia-lobby">
+            <div class="trivia-label">Sports Trivia</div>
+            <div class="trivia-sub">New game starting in...</div>
+            <div class="trivia-countdown">24</div>
+            <div class="trivia-players">
+              <div class="avatar-stack">
+                <div class="av" style="background:#5545D3;">JM</div>
+                <div class="av" style="background:#228C88;">SK</div>
+                <div class="av" style="background:#F97316;">RT</div>
+                <div class="av" style="background:#7C3AED;">+9</div>
+              </div>
+              <span>12 players waiting</span>
+            </div>
+            <div style="font-size:11px; color:var(--faint); text-align:center; line-height:1.6;">
+              10 questions · 15 seconds each<br>Sports, Pop Culture, Music
+            </div>
+            <div style="width:100%; background:rgba(85,69,211,0.2); border:1px solid rgba(85,69,211,0.4); border-radius:12px; padding:12px; text-align:center; font-size:13px; font-weight:800; color:#A89DF8;">
+              Ready — Game starts in 24s
+            </div>
+          </div>
+          <div style="padding-bottom:24px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- State B: Trivia question in progress -->
+    <div class="phone-wrap">
+      <div class="phone-label">State B — Trivia In Progress</div>
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-inner">
+          <div class="phone-status"><span>9:41</span><span>●●●</span></div>
+          <div class="pheader">
+            <div class="pheader-logo">Sports<span>IQ</span></div>
+            <div class="iq-chip"><div class="iq-dot"></div>2,450 IQ</div>
+          </div>
+          <div class="swipe-dots"><div class="sdot active"></div><div class="sdot"></div><div class="sdot"></div></div>
+          <div style="flex:1; display:flex; flex-direction:column; padding:10px 14px 16px; gap:0;">
+            <div class="q-progress" style="margin-bottom:4px;">
+              <div class="q-prog-dot done"></div><div class="q-prog-dot done"></div>
+              <div class="q-prog-dot done"></div><div class="q-prog-dot active"></div>
+              <div class="q-prog-dot"></div><div class="q-prog-dot"></div>
+              <div class="q-prog-dot"></div><div class="q-prog-dot"></div>
+              <div class="q-prog-dot"></div><div class="q-prog-dot"></div>
+            </div>
+            <div class="q-timer" style="margin-bottom:4px;">
+              <span>Question 4 of 10</span><span style="color:#A89DF8;">9s left</span>
+            </div>
+            <div class="q-timer-bar" style="margin-bottom:6px;"><div class="q-timer-fill" style="width:90%;"></div></div>
+            <div style="display:flex; justify-content:center; margin-bottom:10px;">
+              <div style="background:rgba(245,158,11,0.12); border:1px solid rgba(245,158,11,0.35); border-radius:20px; padding:4px 14px; display:flex; align-items:center; gap:6px;">
+                <span style="font-size:11px;">⚡</span>
+                <span style="font-size:15px; font-weight:900; color:#F59E0B;">900</span>
+                <span style="font-size:10px; font-weight:700; color:#F59E0B; opacity:0.8;">IQ</span>
+                <span style="font-size:10px; color:var(--faint);">↓ ticking</span>
+              </div>
+            </div>
+            <div style="font-size:13px; font-weight:700; color:var(--text); line-height:1.45; margin-bottom:12px;">Which NFL team has the most Super Bowl wins of all time?</div>
+            <div style="display:flex; flex-direction:column; gap:8px; flex:1;">
+              <div style="position:relative; border-radius:10px; overflow:hidden; border:1px solid rgba(255,255,255,0.08); flex:1; min-height:36px; display:flex; align-items:center;">
+                <div style="position:absolute; inset:0; width:18%; background:rgba(255,255,255,0.06);"></div>
+                <span style="position:relative; flex:1; padding:0 12px; font-size:12px; font-weight:600; color:var(--muted);">New England Patriots</span>
+                <span style="position:relative; padding-right:12px; font-size:11px; font-weight:700; color:var(--faint);">18%</span>
+              </div>
+              <div style="position:relative; border-radius:10px; overflow:hidden; border:2px solid #7C6EF5; flex:1; min-height:36px; display:flex; align-items:center;">
+                <div style="position:absolute; inset:0; width:41%; background:rgba(85,69,211,0.25);"></div>
+                <span style="position:relative; flex:1; padding:0 12px; font-size:12px; font-weight:800; color:var(--text);">✓ Pittsburgh Steelers</span>
+                <span style="position:relative; padding-right:12px; font-size:11px; font-weight:800; color:#A89DF8;">41%</span>
+              </div>
+              <div style="position:relative; border-radius:10px; overflow:hidden; border:1px solid rgba(255,255,255,0.08); flex:1; min-height:36px; display:flex; align-items:center;">
+                <div style="position:absolute; inset:0; width:29%; background:rgba(255,255,255,0.06);"></div>
+                <span style="position:relative; flex:1; padding:0 12px; font-size:12px; font-weight:600; color:var(--muted);">San Francisco 49ers</span>
+                <span style="position:relative; padding-right:12px; font-size:11px; font-weight:700; color:var(--faint);">29%</span>
+              </div>
+              <div style="position:relative; border-radius:10px; overflow:hidden; border:1px solid rgba(255,255,255,0.08); flex:1; min-height:36px; display:flex; align-items:center;">
+                <div style="position:absolute; inset:0; width:12%; background:rgba(255,255,255,0.06);"></div>
+                <span style="position:relative; flex:1; padding:0 12px; font-size:12px; font-weight:600; color:var(--muted);">Dallas Cowboys</span>
+                <span style="position:relative; padding-right:12px; font-size:11px; font-weight:700; color:var(--faint);">12%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- State D: Answer locked — choose multiplier -->
+    <div class="phone-wrap">
+      <div class="phone-label">State D — Multiplier Pick</div>
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-inner">
+          <div class="phone-status"><span>9:41</span><span>●●●</span></div>
+          <div class="pheader">
+            <div class="pheader-logo">Sports<span>IQ</span></div>
+            <div class="iq-chip"><div class="iq-dot"></div>2,450 IQ</div>
+          </div>
+          <div class="swipe-dots"><div class="sdot active"></div><div class="sdot"></div><div class="sdot"></div></div>
+          <div style="flex:1; display:flex; flex-direction:column; padding:10px 14px 16px; gap:0;">
+            <!-- Progress + timer -->
+            <div class="q-progress" style="margin-bottom:4px;">
+              <div class="q-prog-dot done"></div><div class="q-prog-dot done"></div>
+              <div class="q-prog-dot done"></div><div class="q-prog-dot active"></div>
+              <div class="q-prog-dot"></div><div class="q-prog-dot"></div>
+              <div class="q-prog-dot"></div><div class="q-prog-dot"></div>
+              <div class="q-prog-dot"></div><div class="q-prog-dot"></div>
+            </div>
+            <div class="q-timer" style="margin-bottom:4px;">
+              <span>Question 4 of 10</span><span style="color:#F59E0B; font-weight:900;">6s left</span>
+            </div>
+            <div class="q-timer-bar" style="margin-bottom:6px;"><div class="q-timer-fill" style="width:60%; background:#F59E0B;"></div></div>
+            <div style="display:flex; justify-content:center; margin-bottom:10px;">
+              <div style="background:rgba(245,158,11,0.12); border:1px solid rgba(245,158,11,0.35); border-radius:20px; padding:4px 14px; display:flex; align-items:center; gap:6px;">
+                <span style="font-size:11px;">⚡</span>
+                <span style="font-size:15px; font-weight:900; color:#F59E0B;">600</span>
+                <span style="font-size:10px; font-weight:700; color:#F59E0B; opacity:0.8;">IQ</span>
+                <span style="font-size:10px; color:var(--faint);">↓ ticking</span>
+              </div>
+            </div>
+
+            <!-- Question -->
+            <div style="font-size:13px; font-weight:700; color:var(--text); line-height:1.45; margin-bottom:12px;">Which NFL team has the most Super Bowl wins of all time?</div>
+
+            <!-- All 4 answers with % fill bars — flex:1 so they grow -->
+            <div style="display:flex; flex-direction:column; gap:8px; flex:1;">
+
+              <div style="position:relative; border-radius:10px; overflow:hidden; border:1px solid rgba(255,255,255,0.08); flex:1; display:flex; align-items:center; min-height:36px;">
+                <div style="position:absolute; inset:0; width:18%; background:rgba(255,255,255,0.06);"></div>
+                <span style="position:relative; flex:1; padding:0 10px; font-size:12px; font-weight:600; color:var(--muted);">New England Patriots</span>
+                <span style="position:relative; padding-right:10px; font-size:11px; font-weight:700; color:var(--faint);">18%</span>
+              </div>
+
+              <div style="position:relative; border-radius:10px; overflow:hidden; border:2px solid #7C6EF5; flex:1; display:flex; align-items:center; min-height:36px;">
+                <div style="position:absolute; inset:0; width:41%; background:rgba(85,69,211,0.25);"></div>
+                <span style="position:relative; flex:1; padding:0 10px; font-size:12px; font-weight:800; color:var(--text);">✓ Pittsburgh Steelers</span>
+                <span style="position:relative; padding-right:10px; font-size:11px; font-weight:800; color:#A89DF8;">41%</span>
+              </div>
+
+              <div style="position:relative; border-radius:10px; overflow:hidden; border:1px solid rgba(255,255,255,0.08); flex:1; display:flex; align-items:center; min-height:36px;">
+                <div style="position:absolute; inset:0; width:29%; background:rgba(255,255,255,0.06);"></div>
+                <span style="position:relative; flex:1; padding:0 10px; font-size:12px; font-weight:600; color:var(--muted);">San Francisco 49ers</span>
+                <span style="position:relative; padding-right:10px; font-size:11px; font-weight:700; color:var(--faint);">29%</span>
+              </div>
+
+              <div style="position:relative; border-radius:10px; overflow:hidden; border:1px solid rgba(255,255,255,0.08); flex:1; display:flex; align-items:center; min-height:36px;">
+                <div style="position:absolute; inset:0; width:12%; background:rgba(255,255,255,0.06);"></div>
+                <span style="position:relative; flex:1; padding:0 10px; font-size:12px; font-weight:600; color:var(--muted);">Dallas Cowboys</span>
+                <span style="position:relative; padding-right:10px; font-size:11px; font-weight:700; color:var(--faint);">12%</span>
+              </div>
+
+            </div>
+
+            <!-- Multiplier panel -->
+            <div style="background:rgba(245,158,11,0.07); border:1px solid rgba(245,158,11,0.25); border-radius:12px; padding:12px 10px; margin-top:10px;">
+              <div style="font-size:10px; font-weight:800; color:#F59E0B; letter-spacing:1.5px; text-transform:uppercase; text-align:center; margin-bottom:10px;">Risk multiplier?</div>
+              <div style="display:flex; gap:8px;">
+                <div style="flex:1; background:rgba(34,197,94,0.12); border:1px solid rgba(34,197,94,0.35); border-radius:10px; padding:12px 0; text-align:center;">
+                  <div style="font-size:22px; font-weight:900; color:#4ADE80; line-height:1;">1.5×</div>
+                  <div style="font-size:10px; font-weight:700; color:#4ADE80; margin-top:4px; opacity:0.85;">300 IQ</div>
+                </div>
+                <div style="flex:1; background:rgba(245,158,11,0.15); border:2px solid #F59E0B; border-radius:10px; padding:12px 0; text-align:center;">
+                  <div style="font-size:22px; font-weight:900; color:#F59E0B; line-height:1;">2×</div>
+                  <div style="font-size:10px; font-weight:700; color:#F59E0B; margin-top:4px; opacity:0.85;">600 IQ</div>
+                </div>
+                <div style="flex:1; background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.35); border-radius:10px; padding:12px 0; text-align:center;">
+                  <div style="font-size:22px; font-weight:900; color:#FCA5A5; line-height:1;">3×</div>
+                  <div style="font-size:10px; font-weight:700; color:#FCA5A5; margin-top:4px; opacity:0.85;">1,200 IQ</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- State C: Live game available + trivia -->
+    <div class="phone-wrap">
+      <div class="phone-label">State C — Live Game Available</div>
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-inner">
+          <div class="phone-status"><span>9:41</span><span>●●●</span></div>
+          <div class="pheader">
+            <div class="pheader-logo">Sports<span>IQ</span></div>
+            <div class="iq-chip"><div class="iq-dot"></div>2,450 IQ</div>
+          </div>
+          <div class="swipe-dots"><div class="sdot active"></div><div class="sdot"></div><div class="sdot"></div></div>
+          <!-- Pick card banner — flex:1 to stretch -->
+          <div style="flex:1; display:flex; flex-direction:column; padding:12px 14px 14px; gap:10px;">
+            <div style="font-size:9px; font-weight:800; color:#F59E0B; letter-spacing:2px; text-transform:uppercase;">🏈 Live Game — Make Your Pick</div>
+            <div style="flex:1; background:rgba(255,255,255,0.04); border:1px solid var(--cardBorder); border-radius:14px; padding:16px 14px; display:flex; flex-direction:column; gap:10px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; font-size:15px; font-weight:900; color:var(--text);">
+                <span>Chiefs</span>
+                <span style="font-size:11px; font-weight:700; color:var(--faint);">vs</span>
+                <span>Raiders</span>
+              </div>
+              <div style="font-size:18px; font-weight:900; color:var(--text); line-height:1.3; font-family:'Lexend',sans-serif;">Will the Chiefs win tonight's game?</div>
+              <div style="display:flex; flex-direction:column; gap:8px; flex:1;">
+                <div style="flex:1; min-height:44px; border-radius:12px; background:rgba(34,197,94,0.12); border:1px solid rgba(34,197,94,0.35); display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:900; color:#4ADE80;">YES — Chiefs win</div>
+                <div style="flex:1; min-height:44px; border-radius:12px; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:900; color:#FCA5A5;">NO — Raiders win</div>
+              </div>
+              <div class="signal-bar">
+                <span>SportsIQ Signal:</span>
+                <div class="signal-fill" style="width:62px; flex-shrink:0;"></div>
+                <div class="signal-fill2" style="width:38px; flex-shrink:0;"></div>
+                <span>62% YES</span>
+              </div>
+            </div>
+            <!-- Trivia row pinned to bottom -->
+            <div style="border:1px solid var(--cardBorder); border-radius:10px; padding:10px 14px; display:flex; align-items:center; justify-content:space-between; background:rgba(255,255,255,0.02);">
+              <div>
+                <div style="font-size:12px; font-weight:800; color:var(--text);">Sports Trivia</div>
+                <div style="font-size:10px; color:var(--faint);">Next game in 18s · 8 players waiting</div>
+              </div>
+              <div style="background:rgba(85,69,211,0.2); border:1px solid rgba(85,69,211,0.35); border-radius:8px; padding:6px 12px; font-size:11px; font-weight:700; color:#A89DF8;">Play →</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ═══════════════════════════════════════════════
+     SCREEN 2 — RESULT
+═══════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">Screen 2 — Result</div>
+  <div class="section-sub">
+    <span class="file-pill warn">app/(app)/pick-result.tsx</span>
+    <span class="badge badge-review">AI-written — review before using</span>
+    <br><br>
+    Shows the status of the user's current pick. If no pick is active, shows today's trivia score and recent results. This screen needs to become swipe page 2 (currently it's a push route).
+  </div>
+
+  <div class="phones-row">
+    <!-- Pending -->
+    <div class="phone-wrap">
+      <div class="phone-label">State A — Pending (game not started)</div>
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-inner">
+          <div class="phone-status"><span>9:41</span><span>●●●</span></div>
+          <div class="pheader">
+            <div class="pheader-logo">Sports<span>IQ</span></div>
+            <div class="iq-chip"><div class="iq-dot"></div>2,450 IQ</div>
+          </div>
+          <div class="swipe-dots"><div class="sdot"></div><div class="sdot active"></div><div class="sdot"></div></div>
+          <div class="result-content" style="position:relative;">
+            <div class="result-badge result-badge-pending">🔒</div>
+            <div style="font-size:18px; font-weight:900; color:var(--text);">Pick Locked</div>
+            <div class="result-pick">Chiefs to win · 2× multiplier<br>Game starts in 4h 22m</div>
+            <div class="pending-card">
+              <div class="live-label">If you win:</div>
+              <div class="live-score" style="color:#4ADE80;">+100 IQ</div>
+              <div class="live-label">If you lose: −50 IQ</div>
+            </div>
+            <div class="rank-chip">🌎 Currently ranked #847 globally</div>
+            <div style="font-size:11px; color:var(--faint); text-align:center;">Swipe left to see the leaderboard</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Win -->
+    <div class="phone-wrap">
+      <div class="phone-label">State B — Win</div>
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-inner" style="position:relative;">
+          <div class="phone-notch"></div>
+          <div class="phone-status"><span>9:41</span><span>●●●</span></div>
+          <div class="pheader">
+            <div class="pheader-logo">Sports<span>IQ</span></div>
+            <div class="iq-chip"><div class="iq-dot"></div>2,550 IQ</div>
+          </div>
+          <div class="swipe-dots"><div class="sdot"></div><div class="sdot active"></div><div class="sdot"></div></div>
+          <div class="result-content" style="position:relative;">
+            <div class="result-win-bg"></div>
+            <div class="result-badge result-badge-win">🏆</div>
+            <div style="font-size:22px; font-weight:900; color:#4ADE80;">You called it!</div>
+            <div class="result-iq">+100 IQ</div>
+            <div class="result-pick">Chiefs won · 2× multiplier · 62% also picked YES</div>
+            <div class="stat-row">
+              <div class="stat-box"><div class="stat-val">2,550</div><div class="stat-lab">Total IQ</div></div>
+              <div class="stat-box"><div class="stat-val">🔥 8</div><div class="stat-lab">Win streak</div></div>
+              <div class="stat-box"><div class="stat-val">#782</div><div class="stat-lab">Global rank</div></div>
+            </div>
+            <div class="result-share-btn">📤 Share this win</div>
+            <div class="result-next-btn">Make another pick →</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loss -->
+    <div class="phone-wrap">
+      <div class="phone-label">State C — Loss</div>
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-inner">
+          <div class="phone-status"><span>9:41</span><span>●●●</span></div>
+          <div class="pheader">
+            <div class="pheader-logo">Sports<span>IQ</span></div>
+            <div class="iq-chip"><div class="iq-dot"></div>2,400 IQ</div>
+          </div>
+          <div class="swipe-dots"><div class="sdot"></div><div class="sdot active"></div><div class="sdot"></div></div>
+          <div class="result-content">
+            <div class="result-badge result-badge-loss">😬</div>
+            <div style="font-size:20px; font-weight:900; color:var(--text);">Tough one</div>
+            <div class="result-iq-loss">−25 IQ</div>
+            <div class="result-pick">Raiders pulled it off<br>57% of players also got this wrong</div>
+            <div class="pending-card">
+              <div class="live-label" style="margin-bottom:6px;">Your IQ never fully disappears</div>
+              <div style="font-size:12px; color:var(--muted); line-height:1.5;">Losses reduce weekly IQ only.<br>Lifetime IQ always goes up with wins.</div>
+            </div>
+            <div class="result-next-btn">Play trivia to earn IQ back →</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ═══════════════════════════════════════════════
+     SCREEN 3 — LEADERBOARD
+═══════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">Screen 3 — Leaderboard</div>
+  <div class="section-sub">
+    <span class="file-pill">app/(app)/(tabs)/leaderboard.tsx</span>
+    <span class="badge badge-done">Mostly wired</span>
+    <br><br>
+    The leaderboard already has Friends / My Bar / Global tabs with real API calls. Review the endpoints it calls and wire them up. Friends tab can use mock data for Phase 4.
+  </div>
+
+  <div class="phones-row">
+    <!-- Friends tab -->
+    <div class="phone-wrap">
+      <div class="phone-label">Friends Tab (show picks right away)</div>
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-inner">
+          <div class="phone-status"><span>9:41</span><span>●●●</span></div>
+          <div class="pheader">
+            <div class="pheader-logo">Sports<span>IQ</span></div>
+            <div class="iq-chip"><div class="iq-dot"></div>2,450 IQ</div>
+          </div>
+          <div class="swipe-dots"><div class="sdot"></div><div class="sdot"></div><div class="sdot active"></div></div>
+          <div class="lb-tabs">
+            <div class="lb-tab active">👥 Friends</div>
+            <div class="lb-tab">🍺 My Bar</div>
+            <div class="lb-tab">🌎 Global</div>
+          </div>
+          <div style="flex:1; overflow:hidden;">
+            <div class="lb-row me">
+              <div class="lb-rank">1</div>
+              <div class="lb-av" style="background:#5545D3; width:32px; height:32px;">Me</div>
+              <div class="lb-info"><div class="lb-name">You 🔥8</div><div class="lb-record">Chiefs WIN · 2× · just now</div></div>
+              <div class="lb-iq">2,450</div>
+            </div>
+            <div class="lb-row">
+              <div class="lb-rank">2</div>
+              <div class="lb-av" style="background:#228C88; width:32px; height:32px; font-size:11px; font-weight:800; color:white; display:flex; align-items:center; justify-content:center;">JM</div>
+              <div class="lb-info"><div class="lb-name">Jake M.</div><div class="lb-record">Chiefs WIN · 1× · 2m ago</div></div>
+              <div class="lb-iq">2,380</div>
+            </div>
+            <div class="lb-row">
+              <div class="lb-rank">3</div>
+              <div class="lb-av" style="background:#F97316; width:32px; height:32px; font-size:11px; font-weight:800; color:white; display:flex; align-items:center; justify-content:center;">SK</div>
+              <div class="lb-info"><div class="lb-name">Sarah K.</div><div class="lb-record">Raiders WIN · 1× · 5m ago</div></div>
+              <div class="lb-iq">2,210</div>
+            </div>
+            <div class="lb-row">
+              <div class="lb-rank">4</div>
+              <div class="lb-av" style="background:#7C3AED; width:32px; height:32px; font-size:11px; font-weight:800; color:white; display:flex; align-items:center; justify-content:center;">RT</div>
+              <div class="lb-info"><div class="lb-name">Ryan T.</div><div class="lb-record">Playing trivia · 4m ago</div></div>
+              <div class="lb-iq">1,950</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Global tab with podium -->
+    <div class="phone-wrap">
+      <div class="phone-label">Global Tab</div>
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-inner">
+          <div class="phone-status"><span>9:41</span><span>●●●</span></div>
+          <div class="pheader">
+            <div class="pheader-logo">Sports<span>IQ</span></div>
+            <div class="iq-chip"><div class="iq-dot"></div>2,450 IQ</div>
+          </div>
+          <div class="swipe-dots"><div class="sdot"></div><div class="sdot"></div><div class="sdot active"></div></div>
+          <div class="lb-tabs">
+            <div class="lb-tab">👥 Friends</div>
+            <div class="lb-tab">🍺 My Bar</div>
+            <div class="lb-tab active">🌎 Global</div>
+          </div>
+          <div class="podium-row">
+            <div class="podium-item">
+              <div class="podium-av" style="width:40px;height:40px;background:#9333ea;font-size:13px;font-weight:800;">KD</div>
+              <div class="podium-place" style="color:#CD7F32;">🥉 3rd</div>
+              <div class="podium-name">Kevin D.</div>
+              <div class="podium-score">14,200</div>
+            </div>
+            <div class="podium-item">
+              <div class="podium-av" style="width:52px;height:52px;background:#f59e0b;font-size:15px;font-weight:800;">MJ</div>
+              <div class="podium-place" style="color:#F59E0B;">🥇 1st</div>
+              <div class="podium-name">Mike J.</div>
+              <div class="podium-score">18,850</div>
+            </div>
+            <div class="podium-item">
+              <div class="podium-av" style="width:44px;height:44px;background:#228C88;font-size:14px;font-weight:800;">AL</div>
+              <div class="podium-place" style="color:#94A3B8;">🥈 2nd</div>
+              <div class="podium-name">Amy L.</div>
+              <div class="podium-score">16,400</div>
+            </div>
+          </div>
+          <div style="border-top:1px solid var(--cardBorder);">
+            <div class="lb-row me">
+              <div class="lb-rank" style="color:#A89DF8;">#847</div>
+              <div class="lb-av" style="background:#5545D3; width:32px; height:32px; font-size:11px; font-weight:800; color:white; display:flex; align-items:center; justify-content:center;">You</div>
+              <div class="lb-info"><div class="lb-name">You</div><div class="lb-record">Top 8% this week</div></div>
+              <div class="lb-iq">2,450</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ═══════════════════════════════════════════════
+     SETTINGS MODAL
+═══════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">Settings Modal</div>
+  <div class="section-sub">
+    <span class="file-pill warn">components/SettingsModal.tsx</span>
+    <span class="badge badge-review">AI-written — review before using</span>
+    <br><br>
+    Slides up from the bottom when user taps the IQ chip in the persistent header. Available on all 3 screens.
+  </div>
+
+  <div class="phones-row">
+    <div class="phone-wrap">
+      <div class="phone-label">Settings Sheet</div>
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-inner" style="position:relative;">
+          <div class="phone-status"><span>9:41</span><span>●●●</span></div>
+          <div class="pheader">
+            <div class="pheader-logo">Sports<span>IQ</span></div>
+            <div class="iq-chip" style="background:rgba(85,69,211,0.35);border-color:#7C6EF5;"><div class="iq-dot"></div>2,450 IQ ▲</div>
+          </div>
+          <!-- Dimmed background -->
+          <div style="flex:1; background:rgba(0,0,0,0.5);"></div>
+          <!-- Settings sheet -->
+          <div class="settings-sheet">
+            <div class="sheet-handle"></div>
+            <div class="sheet-section">
+              <div class="sheet-label">Your Stats</div>
+              <div class="sheet-stats">
+                <div class="sheet-stat"><div class="sheet-stat-val">158-89</div><div class="sheet-stat-lab">Record</div></div>
+                <div class="sheet-stat"><div class="sheet-stat-val">64%</div><div class="sheet-stat-lab">Win Rate</div></div>
+                <div class="sheet-stat"><div class="sheet-stat-val">🔥23</div><div class="sheet-stat-lab">Streak</div></div>
+                <div class="sheet-stat"><div class="sheet-stat-val">#847</div><div class="sheet-stat-lab">Rank</div></div>
+              </div>
+            </div>
+            <div class="sheet-section">
+              <div class="sheet-label">Notifications</div>
+              <div class="sheet-row">Game Day alerts <div class="toggle-on"><div class="toggle-knob"></div></div></div>
+              <div class="sheet-row">Social (friends' picks) <div class="toggle-on"><div class="toggle-knob"></div></div></div>
+              <div class="sheet-row">Streak reminder (6pm) <div class="toggle-off"><div class="toggle-knob"></div></div></div>
+            </div>
+            <div class="sheet-section">
+              <div class="sheet-row" style="color:var(--muted);">Account &amp; Privacy →</div>
+              <div class="sheet-row" style="color:#FCA5A5;">Sign out</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ═══════════════════════════════════════════════
+     FILE MAP SUMMARY
+═══════════════════════════════════════════════ -->
+<div class="section" style="padding-bottom:60px;">
+  <div class="section-title">File Map</div>
+  <div class="section-sub">Quick reference for what to touch and what to leave alone.</div>
+
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; max-width:900px;">
+    <div class="info-box amber">
+      <strong>🔧 Modify these</strong><br><br>
+      <span class="code">app/(app)/(tabs)/_layout.tsx</span> — swap tabs for swipe nav<br><br>
+      <span class="code">app/(app)/(tabs)/index.tsx</span> — Play screen (trivia default + picks when live). Heavy AI additions — Isaac's call whether to keep or rewrite.<br><br>
+      <span class="code">app/(app)/pick-result.tsx</span> — make this swipe page 2 instead of a push route<br><br>
+      <span class="code">app/(app)/(tabs)/leaderboard.tsx</span> — already mostly wired, wire backend endpoints
+    </div>
+    <div class="info-box green">
+      <strong>✅ Already built — review &amp; use</strong><br><br>
+      <span class="code">components/TriviaGame.tsx</span> — DO NOT MODIFY. Import and render on Play screen.<br><br>
+      <span class="code">components/SettingsModal.tsx</span> — AI-written, review before using. Trigger from IQ chip tap.<br><br>
+      <span class="code">app/(app)/pick-card.tsx</span> — AI-written Pick Card UI. Review and wire to backend.<br><br>
+      <span class="code">app/(app)/(tabs)/user.tsx</span> — may no longer need its own tab if Settings is a modal
+    </div>
+  </div>
+
+  <div class="info-box" style="max-width:900px; margin-top:16px;">
+    <strong>IQ Scoring (for backend):</strong><br>
+    Win 1× = +50 IQ &nbsp;|&nbsp; Loss 1× = −25 IQ<br>
+    Win 2× = +100 IQ &nbsp;|&nbsp; Loss 2× = −50 IQ<br>
+    Win 5× = +250 IQ &nbsp;|&nbsp; Loss 5× = −125 IQ (Pro only — can lock for Phase 4)<br><br>
+    <strong>Plain English picks rule:</strong> Never show "Chiefs -6.5". Always show "Will the Chiefs win?" — a question anyone can answer.
+  </div>
+</div>
+
+</body>
+</html>
