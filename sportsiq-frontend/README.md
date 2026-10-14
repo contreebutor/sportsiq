@@ -1,275 +1,188 @@
 # SportsIQ Frontend
 
-A React + TypeScript frontend application for SportsIQ, featuring real-time sports dashboards, contest management, and user predictions.
+The SportsIQ web app. One Vite + React single-page app that serves several kinds of users:
 
-## Tech Stack
+| Audience | Where | What they get |
+|---|---|---|
+| **Venue TVs** | `/dashboard/:profileId` | Full-screen 1920×1080 sports dashboard, contest dashboard or bar screen |
+| **Venue staff and admins** | `/signin` → `/manage` | Management panel for profiles, contests, prizes, points, games |
+| **Patrons on their phone** (contest QR codes) | `/submit-predictions/:id`, `/submit-bingo-cards/:id`, `/contest-winner/:id` | Enter a contest, verify by SMS, redeem a prize |
+| **Players without the app** | `/play/*` | Browser version of live trivia |
 
-- **React 19** with TypeScript
-- **Vite** - Build tool and dev server
-- **Tailwind CSS** - Styling
-- **Supabase** - Backend services (authentication, database)
-- **React Router** - Client-side routing
-- **Zustand** - State management
+**Stack:** React 19, TypeScript, Vite 7, Tailwind CSS 4 (`@tailwindcss/vite`), React Router 7,
+Zustand, Supabase JS (auth), Socket.IO client, Luxon, react-toastify. Deployed on Vercel.
 
-## Prerequisites
+---
 
-- Node.js (v18 or higher recommended)
-- npm or yarn
-- Supabase account and project
-- Backend API server (for contest operations)
+## Getting started
 
-## Setup Instructions
-
-### 1. Clone the Repository
+Requirements: Node.js 20+ and a running [backend](../sportsiq-backend) (REST API and, for live
+games, the socket server).
 
 ```bash
-git clone https://github.com/LumenIQ25/sportsiq-frontend
 cd sportsiq-frontend
-```
-
-### 2. Install Dependencies
-
-```bash
 npm install
+# create .env (see below)
+npm run dev            # http://localhost:5173
 ```
 
-### 3. Environment Variables
+### Environment variables
 
-Create a `.env` file in the root directory with the following variables:
+Create `.env` (or `.env.local`) in this folder. It is gitignored. All variables must start with
+`VITE_`, and the dev server must be restarted after you change them.
 
-```env
-VITE_SUPABASE_URL=your_supabase_project_url
-VITE_SUPABASE_PUBLISHABLE_KEY=your_supabase_anon_key
-VITE_BACKEND_URL=your_backend_api_url
-```
+| Variable | Description | Local example |
+|---|---|---|
+| `VITE_BACKEND_URL` | Backend REST base URL (no `/v1` suffix, the services add it) | `http://localhost:8080` |
+| `VITE_SOCKET_URL` | Backend Socket.IO server | `http://localhost:8082` |
+| `VITE_SUPABASE_URL` | Supabase project URL | `https://xxxx.supabase.co` |
+| `VITE_SUPABASE_PUBLISHABLE_KEY` | Supabase anon / publishable key (safe for browsers) | `eyJ…` |
 
-**Example:**
+### Scripts
 
-```env
-VITE_SUPABASE_URL=https://xxxxx.supabase.co
-VITE_SUPABASE_PUBLISHABLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-VITE_BACKEND_URL=http://localhost:3000
-```
+| Command | Description |
+|---|---|
+| `npm run dev` | Vite dev server with HMR |
+| `npm run build` | Production build to `dist/` |
+| `npm run preview` | Serve the production build locally |
+| `npm run lint` | ESLint |
 
-> **Note:** The `.env` file is gitignored. Make sure to set up your environment variables before running the application.
+There is no test suite. Run `npm run build` and `npm run lint` before you push.
 
-### 4. Run the Development Server
+---
 
-```bash
-npm run dev
-```
+## Routes
 
-The application will be available at `http://localhost:5173` (or the port shown in the terminal).
+Defined in `src/App.tsx`.
 
-## Available Scripts
+| Path | Page | Auth | Notes |
+|---|---|---|---|
+| `/signin` | `SignInPage` | public | Supabase email/password sign-in |
+| `/manage` | `ManagementPage` | **protected** | Redirects to `/signin` when there's no session |
+| `/dashboard/:id` | `DashboardPage` | public | `:id` = venue profile ID. Rendered on a fixed 1920×1080 canvas |
+| `/submit-predictions/:id` | `SubmitPredictionsPage` | public | Predictor contest entry (mobile layout) |
+| `/submit-bingo-cards/:id` | `SubmitBingoCardsPage` | public | Bingo contest entry |
+| `/contest-winner/:id` | `ContestWinnerPage` | public | Winner prize redemption |
+| `/team-game-stats` | `TeamGameStatsPage` | public | Internal view of live team stats for all five sports |
+| `/delete-account` | `DeleteAccountPage` | public | Account deletion page (needed for app store listings) |
+| `/play` | `webPlay/LandingPage` | public | Web trivia landing page |
+| `/play/signin` → `/play/verify` | phone + OTP | public | Sign in by SMS code |
+| `/play/profile` | `webPlay/ProfilePage` | player | Set name and avatar |
+| `/play/trivia` | `webPlay/TriviaPage` | player | Live trivia over Socket.IO |
+| `*` | → `/not-found` | | |
 
-- `npm run dev` - Start the development server with hot reload
-- `npm run build` - Build the application for production
-- `npm run preview` - Preview the production build locally
-- `npm run lint` - Run ESLint to check code quality
+`vercel.json` rewrites every path to `/` so client-side routing works on deep links.
 
-## Application Routes
+---
 
-### Public Routes
+## Key features
 
-- **`/signin`** - User authentication page
+### Venue dashboard (`/dashboard/:id`)
 
-  - Sign in with email and password
-  - Sign up for new accounts
+`DashboardPage` polls the venue's dashboard settings every 10 s and today's contest every 10 s
+while a contest is active (60 s otherwise), then picks what to show:
 
-- **`/dashboard/:id`** - Main dashboard view
+1. **`contest_dashboard_type === 2`** and contest enabled → the **Bar Screen**
+   (`components/Dashboard/Barscreen/`): live trivia, predictions and leaderboards over Socket.IO.
+2. Contest enabled and the contest game is `Scheduled` or `InProgress` → the **contest
+   dashboard** (`components/Dashboard/Contest/`) with pre-game and live views.
+3. Otherwise → the **general dashboard** (`components/Dashboard/General/`): rotating game cards
+   with scores, odds, betting splits and probabilities.
 
-  - Displays NBA and NFL dashboards
-  - Rotates between views automatically
-  - Requires a valid profile ID
-  - Default redirect: `/dashboard/35d34afb-3138-4e86-8b13-a67279b2aa7f`
+The page is laid out at 1920×1080 and scaled to fit the window (CSS `zoom` on Chromium/WebKit,
+`transform: scale` on Firefox). See the effect in `App.tsx`.
 
-- **`/submit-predictions/:id`** - Contest submission page
+> `components/Dashboard/Barscreen/` is a copy of the standalone
+> [`sportsiq-barscreen`](../sportsiq-barscreen) app and is currently the **more up-to-date** of
+> the two: it uses the real `/trivia` events and the `/v1/barscreen/*` endpoints. When you change
+> a shared screen, update both copies.
 
-  - Mobile-optimized view
-  - Allows users to submit predictions for contests
-  - Flow: Predictions → Join Game → Verify OTP → Confirmation
+### Management panel (`/manage`)
 
-- **`/contest-winner/:id`** - Contest winner redemption page
-  - Mobile-optimized view
-  - Displays winner information and allows redemption
+`components/Management/ManagePanel.tsx` renders a sidebar of tabs. Which tabs appear depends on
+`profile.isAdmin`:
 
-### Protected Routes
+| Tab | Who | Component | Purpose |
+|---|---|---|---|
+| Users / Profile | all | `Profile/AdminPanel` or `Profile/UserPanel` | Admins manage all venue profiles (create, roles, dashboard type, rotation). Venues edit their own view settings |
+| Contests | admin | `Contest/ContestManagePanel` | Calendar of upcoming games; enable a game as a predictor or bingo contest; configure categories |
+| Prizes | all | `PrizeManagePanel` | Default prizes per contest type |
+| Points | admin | `SportsIQPointsManagePanel` | Default SportsIQ points awarded |
+| Games | admin | `GameManagePanel` | Featured games for the general dashboard |
+| Mobile Games | admin | `Mobile/MobileGameManagePanel` | Which games and predictors appear in the mobile app |
+| Bar Screen | admin | link | Opens the design mockups site |
 
-- **`/manage`** - Admin/Management Panel
-  - Requires authentication (redirects to `/signin` if not logged in)
-  - Two main sections:
-    - **User Management**: Manage user profiles, roles, and view settings
-    - **Contest Management**: Create and manage contests, games, and quarters
+### Contest entry (patron phones)
 
-## Mock Data
+Patrons scan a QR code on the venue TV and land on `/submit-predictions/:id` or
+`/submit-bingo-cards/:id`. The flow is: make picks → enter nickname and phone →
+`POST /v1/phone/create-otp` → verify code → `POST /v1/contest/register-predictions` (or fetch
+bingo cards). Winners get an SMS link to `/contest-winner/:id`, which calls
+`POST /v1/contest/redeem-winner`.
 
-The application includes mock data for development and testing purposes:
+### Web Play (`/play`)
 
-**Location:** `src/data/mockData.ts`
+`src/webPlay/` is a self-contained mini app that mirrors the mobile trivia experience in the
+browser: phone + OTP sign-in, profile setup, and the live `/trivia` Socket.IO game. Its state
+lives in a persisted Zustand store (`webPlay/store.ts`, `localStorage`). Socket event types are
+in `webPlay/types.ts` and must stay in sync with the backend and mobile app.
 
-- `MOCK_GAMES` - Sample NBA game data with live scores, odds, and statistics
-- `MOCK_CONTEST_GAME_TODAY` - Sample contest game data
-- `MOCK_CONTESTS_WITH_PREDICTIONS` - Sample contest data with predictions
+---
 
-To use mock data in development, you can import and use these constants in your components.
-
-## Admin Dashboard
-
-### Accessing the Admin Dashboard
-
-1. **Sign In**: Navigate to `/signin` and sign in with an admin account
-2. **Access Management Panel**: Go to `/manage` (protected route)
-3. **Navigate Tabs**: Use the sidebar to switch between:
-   - **Manage Users** - User management interface
-   - **Manage Contests** - Contest management interface
-
-### Admin Features
-
-#### User Management
-
-- View all user profiles
-- Update user roles (admin/user)
-- Manage view settings (view count, rotation interval, rotation enable/disable)
-- Update user notes and usernames
-
-#### Contest Management
-
-- Create and manage contests
-- Set up game cards
-- Configure quarters
-- Manage contest calendar
-
-### User Panel (Non-Admin)
-
-Non-admin users can access `/manage` to:
-
-- View and update their own view management settings
-- Configure rotation intervals and view counts
-
-## Contests
-
-### Viewing Contests
-
-Contests are displayed on the dashboard (`/dashboard/:id`) and can be filtered by:
-
-- Game status (Scheduled, InProgress, Final)
-- Sport (NBA, NFL)
-- Date
-
-### Submitting Predictions
-
-1. Navigate to `/submit-predictions/:id` where `:id` is the contest game ID
-2. Enter predictions for each quarter (1, 2, 3, 4) and full game
-3. Provide nickname and phone number
-4. Verify phone number with OTP
-5. Submit predictions
-
-### Contest Winner Redemption
-
-1. Navigate to `/contest-winner/:id` where `:id` is the contest winner ID
-2. View winner information
-3. Redeem the prize
-
-## Project Structure
+## Project structure
 
 ```
 src/
-├── components/          # Reusable React components
-│   ├── Dashboard/      # Dashboard-related components
-│   ├── DashboardV2/    # Updated dashboard components
-│   ├── Contest/        # Contest-related components
-│   └── ...
-├── pages/              # Page components
-│   ├── Dashboard.tsx
-│   ├── SignIn.tsx
-│   ├── ManagePanel/    # Admin panel pages
-│   └── Contest/        # Contest pages
-├── hooks/              # Custom React hooks
-│   ├── useAuth.tsx     # Authentication hook
-│   └── useContest.tsx  # Contest data hook
-├── services/           # API service functions
-│   ├── contestService.ts
-│   └── ...
-├── store/              # Zustand state management
-├── types/              # TypeScript type definitions
-├── lib/                # Utility functions
-│   ├── supabase.ts    # Supabase client
-│   └── utils.ts        # Helper functions
-└── data/               # Mock data
-    └── mockData.ts
+├── App.tsx                 # routes + 1920×1080 dashboard scaling
+├── main.tsx                # React root, BrowserRouter
+├── index.css               # Tailwind entry + global styles
+├── pages/                  # route-level pages (see table above)
+│   └── contest/            # bingo entry page and header
+├── components/
+│   ├── Dashboard/
+│   │   ├── General/        # non-contest rotating dashboard
+│   │   ├── Contest/        # PreGame / LiveGame / FinalGame contest views
+│   │   ├── Common/         # cards shared between dashboards
+│   │   └── Barscreen/      # bar screen (mirror of sportsiq-barscreen/src)
+│   ├── Management/         # /manage panels (Profile, Contest, Mobile, prizes, points, games)
+│   ├── SubmitPredictions/  # predictor entry steps
+│   ├── ProtectedRoute.tsx  # Supabase session guard
+│   └── StyledDefault/, Wrapper/  # shared UI primitives
+├── webPlay/                # /play browser trivia app (pages, socket, store, types)
+├── services/               # REST clients: contest, game, manage, phone, teamGameStats
+├── store/                  # Zustand: userStore, contestStore
+├── hooks/useAuth.tsx       # Supabase auth session + profile
+├── lib/                    # supabase client, cn() class helper, utils
+├── types/                  # contests.ts, general.ts
+└── data/data.ts            # static data and fixtures
 ```
 
-## Authentication
+### Talking to the backend
 
-The application uses Supabase for authentication:
+- **REST:** every call lives in `src/services/*.ts` (and `webPlay/api.ts`) and uses
+  `fetch(`${import.meta.env.VITE_BACKEND_URL}/v1/...`)`. Add new endpoints there rather than
+  calling `fetch` from components.
+- **Socket.IO:** `webPlay/socket.ts` and `components/Dashboard/Barscreen/lib/socket.ts` connect
+  to `${VITE_SOCKET_URL}/trivia`.
+- **Supabase:** used directly only for authentication (`lib/supabase.ts`, `hooks/useAuth.tsx`).
+  Data reads and writes go through the backend.
 
-- **Sign Up**: Creates user in Supabase Auth and creates profile in database
-- **Sign In**: Authenticates with Supabase
-- **Protected Routes**: Uses `ProtectedRoute` component to guard admin routes
-- **Session Management**: Automatically handles session persistence and updates
-
-## Database (Supabase)
-
-The application expects the following Supabase tables:
-
-- `profiles` - User profile information
-
-## Backend API Integration
-
-The frontend communicates with a backend API for:
-
-- User signup: `POST /v1/auth/signup`
-- OTP creation: `POST /v1/contest/create-otp`
-- OTP verification: `POST /v1/contest/verify-otp`
-- Contest redemption: `POST /v1/contest/update-contest-redeemed`
-
-Set the `VITE_BACKEND_URL` environment variable to point to your backend API.
-
-## Development Tips
-
-1. **Hot Reload**: The Vite dev server supports hot module replacement (HMR) for instant updates
-2. **TypeScript**: All components are typed - check the console for type errors
-3. **Linting**: Run `npm run lint` before committing to catch code quality issues
-4. **Mock Data**: Use mock data from `src/data/mockData.ts` for testing without backend
-5. **Viewport Scaling**: The app uses custom viewport scaling for different screen sizes (1920x1080 for desktop, full viewport for mobile)
-
-## Building for Production
-
-```bash
-npm run build
-```
-
-The production build will be output to the `dist/` directory. You can preview it locally with:
-
-```bash
-npm run preview
-```
+---
 
 ## Deployment
 
-The application is configured for Vercel deployment (see `vercel.json`). The build output in `dist/` can be deployed to any static hosting service.
+Hosted on **Vercel**. The build command is `npm run build` and the output directory is `dist/`.
+Set the four `VITE_*` variables in the Vercel project for each environment. Vite inlines them at
+build time, so you must redeploy after changing them.
+
+---
 
 ## Troubleshooting
 
-### Environment Variables Not Loading
-
-- Ensure your `.env` file is in the root directory
-- Restart the dev server after adding/changing environment variables
-- Check that variable names start with `VITE_`
-
-### Supabase Connection Issues
-
-- Verify `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` are correct
-- Check Supabase project settings
-- Ensure Row Level Security (RLS) policies allow necessary operations
-
-### Backend API Errors
-
-- Verify `VITE_BACKEND_URL` is set correctly
-- Check that the backend server is running
-- Review browser console and network tab for API errors
-
-## License
-
-[Add your license information here]
+| Symptom | Check |
+|---|---|
+| Env values are `undefined` | Name starts with `VITE_`? Dev server restarted? |
+| `/manage` keeps bouncing to `/signin` | Supabase URL/key correct, and the user has a row in `profiles` |
+| Dashboard is blank or stuck | Is `:id` a valid profile ID? Is the API reachable at `VITE_BACKEND_URL`? |
+| Bar screen or trivia never updates | Socket server running at `VITE_SOCKET_URL`? Look for the `/trivia` websocket in the Network tab |
+| Deep link 404 on Vercel | `vercel.json` rewrite still present? |
