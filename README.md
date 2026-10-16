@@ -21,7 +21,7 @@ dashboard.
             ┌──────────────┐   ┌──────────────┐   ┌──────────────┐
             │  mobile app  │   │   frontend   │   │  barscreen   │
             └──────┬───────┘   └──────┬───────┘   └──────┬───────┘
-         REST /v1  │  Socket.IO /trivia│                  │
+         REST /v1  │  Socket.IO/trivia│                  │
                    ▼                  ▼                  ▼
    ┌───────────────────────┐   ┌──────────────────────────────┐
    │ API  (src/server.ts)  │   │ Socket server (socketServer) │
